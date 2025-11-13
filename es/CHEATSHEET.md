@@ -471,10 +471,10 @@ rm -rf ../feature-branch
 
 - [`START_HERE.md`](START_HERE.md) - Tutorial paso a paso
 - [`README.md`](README.md) - Guía completa
-- [`worktree-start.md`](worktree-start.md) - Detalles de creación
-- [`worktree-compare.md`](worktree-compare.md) - Detalles de comparación
-- [`worktree-merge.md`](worktree-merge.md) - Detalles de merge
-- [`worktree-list.md`](worktree-list.md) - Gestión y cleanup
+- [`worktree-start.md`](../worktree-start.md) - Detalles de creación
+- [`worktree-compare.md`](../worktree-compare.md) - Detalles de comparación
+- [`worktree-merge.md`](../worktree-merge.md) - Detalles de merge
+- [`worktree-list.md`](../worktree-list.md) - Gestión y cleanup
 
 ### Enlaces Útiles
 

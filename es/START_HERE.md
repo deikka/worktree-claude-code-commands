@@ -513,10 +513,10 @@ A: Igual que branches normales: coordinación y pull/push regular.
 3. **Profundiza:** Revisa [`README.md`](README.md) para detalles avanzados
 
 **Documentación completa de cada comando:**
-- [`worktree-start.md`](worktree-start.md)
-- [`worktree-compare.md`](worktree-compare.md)
-- [`worktree-merge.md`](worktree-merge.md)
-- [`worktree-list.md`](worktree-list.md)
+- [`worktree-start.md`](../worktree-start.md)
+- [`worktree-compare.md`](../worktree-compare.md)
+- [`worktree-merge.md`](../worktree-merge.md)
+- [`worktree-list.md`](../worktree-list.md)
 
 ---
 

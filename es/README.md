@@ -207,7 +207,7 @@ bin/rails test  # O tu comando de tests
 4. (Smart) Genera `FEATURE.md` con guía completa
 5. Setup tracking branch en remote
 
-**[Documentación completa →](worktree-start.md)**
+**[Documentación completa →](../worktree-start.md)**
 
 ---
 
@@ -233,7 +233,7 @@ bin/rails test  # O tu comando de tests
 - ⚠️ Detección de conflictos potenciales
 - 📋 Diff completo para review
 
-**[Documentación completa →](worktree-compare.md)**
+**[Documentación completa →](../worktree-compare.md)**
 
 ---
 
@@ -259,7 +259,7 @@ bin/rails test  # O tu comando de tests
 
 **⚠️ IMPORTANTE:** Siempre usa `/worktree-compare` antes de merge.
 
-**[Documentación completa →](worktree-merge.md)**
+**[Documentación completa →](../worktree-merge.md)**
 
 ---
 
@@ -284,7 +284,7 @@ bin/rails test  # O tu comando de tests
 /worktree-list prune
 ```
 
-**[Documentación completa →](worktree-list.md)**
+**[Documentación completa →](../worktree-list.md)**
 
 ---
 
@@ -302,10 +302,10 @@ bin/rails test  # O tu comando de tests
 
 | Comando | Documentación | Nivel |
 |---------|---------------|-------|
-| `/worktree-start` | [`worktree-start.md`](worktree-start.md) | 📘 Detallado |
-| `/worktree-compare` | [`worktree-compare.md`](worktree-compare.md) | 📘 Detallado |
-| `/worktree-merge` | [`worktree-merge.md`](worktree-merge.md) | 📘 Detallado |
-| `/worktree-list` | [`worktree-list.md`](worktree-list.md) | 📘 Detallado |
+| `/worktree-start` | [`worktree-start.md`](../worktree-start.md) | 📘 Detallado |
+| `/worktree-compare` | [`worktree-compare.md`](../worktree-compare.md) | 📘 Detallado |
+| `/worktree-merge` | [`worktree-merge.md`](../worktree-merge.md) | 📘 Detallado |
+| `/worktree-list` | [`worktree-list.md`](../worktree-list.md) | 📘 Detallado |
 
 ---
 
