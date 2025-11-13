@@ -1,0 +1,157 @@
+{
+  "version": "1.0.0",
+  "stacks": {
+    "rails": {
+      "name": "Ruby on Rails",
+      "branch_prefix": "feat",
+      "branch_patterns": {
+        "feature": "feat",
+        "bugfix": "fix",
+        "refactor": "refactor",
+        "hotfix": "hotfix"
+      },
+      "checks": [
+        "migrations",
+        "routes",
+        "credentials",
+        "tests"
+      ],
+      "suggested_files": [
+        "app/models/**/*.rb",
+        "app/controllers/**/*.rb",
+        "app/services/**/*.rb",
+        "config/routes.rb",
+        "db/migrate/*.rb"
+      ]
+    },
+    "wordpress": {
+      "name": "WordPress (WordPlate)",
+      "branch_prefix": "feature",
+      "branch_patterns": {
+        "feature": "feature",
+        "bugfix": "bugfix",
+        "enhancement": "enhancement",
+        "hotfix": "hotfix"
+      },
+      "checks": [
+        "themes",
+        "plugins",
+        "assets",
+        "database"
+      ],
+      "suggested_files": [
+        "public/themes/**/*.php",
+        "public/plugins/**/*.php",
+        "resources/**/*"
+      ]
+    },
+    "node": {
+      "name": "Node.js / JavaScript",
+      "branch_prefix": "feat",
+      "branch_patterns": {
+        "feature": "feat",
+        "bugfix": "fix",
+        "refactor": "refactor",
+        "hotfix": "hotfix"
+      },
+      "checks": [
+        "dependencies",
+        "tests",
+        "build"
+      ],
+      "suggested_files": [
+        "src/**/*.js",
+        "src/**/*.ts",
+        "package.json",
+        "tests/**/*"
+      ]
+    },
+    "python": {
+      "name": "Python",
+      "branch_prefix": "feat",
+      "branch_patterns": {
+        "feature": "feat",
+        "bugfix": "fix",
+        "refactor": "refactor",
+        "hotfix": "hotfix"
+      },
+      "checks": [
+        "dependencies",
+        "tests",
+        "linting"
+      ],
+      "suggested_files": [
+        "src/**/*.py",
+        "tests/**/*.py",
+        "requirements.txt",
+        "setup.py"
+      ]
+    },
+    "go": {
+      "name": "Go",
+      "branch_prefix": "feat",
+      "branch_patterns": {
+        "feature": "feat",
+        "bugfix": "fix",
+        "refactor": "refactor",
+        "hotfix": "hotfix"
+      },
+      "checks": [
+        "dependencies",
+        "tests",
+        "build"
+      ],
+      "suggested_files": [
+        "**/*.go",
+        "go.mod",
+        "go.sum"
+      ]
+    },
+    "rust": {
+      "name": "Rust",
+      "branch_prefix": "feat",
+      "branch_patterns": {
+        "feature": "feat",
+        "bugfix": "fix",
+        "refactor": "refactor",
+        "hotfix": "hotfix"
+      },
+      "checks": [
+        "dependencies",
+        "tests",
+        "clippy"
+      ],
+      "suggested_files": [
+        "src/**/*.rs",
+        "Cargo.toml",
+        "Cargo.lock"
+      ]
+    },
+    "generic": {
+      "name": "Generic Project",
+      "branch_prefix": "feat",
+      "branch_patterns": {
+        "feature": "feat",
+        "bugfix": "fix",
+        "refactor": "refactor",
+        "hotfix": "hotfix",
+        "docs": "docs",
+        "test": "test"
+      },
+      "checks": [
+        "basic"
+      ],
+      "suggested_files": []
+    }
+  },
+  "defaults": {
+    "branch_separator": "/",
+    "max_branch_length": 50,
+    "merge_strategy": "no-ff",
+    "auto_push": true,
+    "auto_cleanup": true
+  },
+  "custom_instructions": {
+    "how_to_add_stack": "To add a custom stack, copy one of the existing stack configs and modify it to match your project needs. You can override any setting in your project's .worktree-config.local.json file."
+  }
+}

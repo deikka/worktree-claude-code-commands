@@ -17,7 +17,7 @@ git add .
 git commit -m "Initial commit"
 
 # 3. Install worktree commands
-bash <(curl -sSL https://raw.githubusercontent.com/yourusername/worktree-claude-code-commands/main/install.sh)
+bash <(curl -sSL https://raw.githubusercontent.com/deikka/worktree-claude-code-commands/main/install.sh)
 
 # Or locally:
 # bash /path/to/worktree-claude-code-commands/install.sh
