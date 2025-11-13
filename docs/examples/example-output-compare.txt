@@ -1,0 +1,65 @@
+$ /worktree-compare feat/jwt-authentication-refresh
+
+🔍 Comparing: feat/jwt-authentication-refresh → main
+═══════════════════════════════════════════════════════════════
+
+📊 STATISTICS
+───────────────────────────────────────────────────────────────
+Files changed:    12 files
+Insertions:       +487 lines
+Deletions:        -23 lines
+Net change:       +464 lines
+
+📝 COMMITS (3 total)
+───────────────────────────────────────────────────────────────
+abc123f (2 hours ago) Add JWT token generation and validation
+  app/services/authentication/jwt_service.rb     | 145 +++++
+  spec/services/authentication/jwt_service_spec.rb | 89 ++++
+
+def456a (3 hours ago) Create User authentication models
+  app/models/user.rb                              | 45 ++
+  app/models/refresh_token.rb                     | 28 ++
+  db/migrate/20250113_create_refresh_tokens.rb    | 12 ++
+  spec/models/user_spec.rb                        | 67 +++
+
+ghi789b (4 hours ago) Add authentication controller
+  app/controllers/api/v1/authentication_controller.rb | 78 +++
+  spec/requests/api/v1/authentication_spec.rb         | 156 +++++
+
+⚠️  POTENTIAL CONFLICTS
+───────────────────────────────────────────────────────────────
+✅ No conflicts detected
+
+🔧 RAILS-SPECIFIC CHECKS
+───────────────────────────────────────────────────────────────
+✅ Migrations: 1 new migration found
+✅ Routes: No route conflicts detected
+✅ Dependencies: No new gems added
+⚠️  Secrets: Verify JWT_SECRET is configured in credentials
+
+📄 FILE CHANGES
+───────────────────────────────────────────────────────────────
+Modified files:
+  M  config/routes.rb (+5, -0)
+  M  Gemfile (+2, -0)
+  M  Gemfile.lock (+15, -0)
+
+New files:
+  A  app/services/authentication/jwt_service.rb
+  A  app/models/refresh_token.rb
+  A  app/controllers/api/v1/authentication_controller.rb
+  A  db/migrate/20250113_create_refresh_tokens.rb
+  A  spec/services/authentication/jwt_service_spec.rb
+  A  spec/models/refresh_token_spec.rb
+  A  spec/requests/api/v1/authentication_spec.rb
+  A  FEATURE.md
+
+═══════════════════════════════════════════════════════════════
+
+✅ Branch looks good for merging!
+
+💡 Next steps:
+   1. Review the changes above
+   2. Run tests: bin/rails test
+   3. Check for security issues
+   4. Merge when ready: /worktree-merge feat/jwt-authentication-refresh

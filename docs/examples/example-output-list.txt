@@ -1,0 +1,33 @@
+$ /worktree-list
+
+📋 Active Worktrees
+═══════════════════════════════════════════════════════════════
+
+/Users/dev/myapp                    [main] ← YOU ARE HERE
+
+/Users/dev/feat/jwt-authentication-refresh
+  ↳ Branch: feat/jwt-authentication-refresh
+  ↳ 3 commits ahead of main
+  ↳ Last commit: 2 hours ago
+  ↳ Status: 2 modified files
+
+/Users/dev/feat/user-profile-redesign
+  ↳ Branch: feat/user-profile-redesign
+  ↳ 7 commits ahead of main
+  ↳ Last commit: 1 day ago
+  ↳ Status: Clean
+
+/Users/dev/fix/login-validation-bug
+  ↳ Branch: fix/login-validation-bug
+  ↳ 1 commit ahead of main
+  ↳ Last commit: 3 hours ago
+  ↳ Status: 1 uncommitted file
+
+═══════════════════════════════════════════════════════════════
+Total: 4 worktrees (1 main + 3 feature branches)
+
+💡 Commands:
+   • Switch: cd ../[worktree-name]
+   • Compare: /worktree-compare [branch-name]
+   • Merge: /worktree-merge [branch-name]
+   • Cleanup merged: /worktree-list cleanup

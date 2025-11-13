@@ -1,0 +1,184 @@
+name: CI
+
+on:
+  push:
+    branches: [ main, develop ]
+  pull_request:
+    branches: [ main, develop ]
+  workflow_dispatch:
+
+jobs:
+  validate-install-script:
+    name: Validate Install Script
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [ubuntu-latest, macos-latest]
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Test install.sh syntax
+        run: bash -n install.sh
+
+      - name: Create test repository
+        run: |
+          cd /tmp
+          mkdir worktree-test-repo
+          cd worktree-test-repo
+          git init
+          git config user.name "Test User"
+          git config user.email "test@example.com"
+          echo "# Test" > README.md
+          git add .
+          git commit -m "Initial commit"
+
+      - name: Test install.sh execution
+        run: |
+          cd /tmp/worktree-test-repo
+          bash ${{ github.workspace }}/install.sh << 'EOF'
+          y
+          EOF
+
+      - name: Verify installation
+        run: |
+          cd /tmp/worktree-test-repo
+          test -d .claude/commands || exit 1
+          test -f .claude/commands/worktree-start.md || exit 1
+          test -f .claude/commands/worktree-list.md || exit 1
+          test -f .claude/commands/worktree-compare.md || exit 1
+          test -f .claude/commands/worktree-merge.md || exit 1
+          grep -q ".claude/" .gitignore || exit 1
+          echo "✅ Installation successful"
+
+  lint-markdown:
+    name: Lint Markdown Files
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Install markdownlint
+        run: npm install -g markdownlint-cli
+
+      - name: Lint markdown files
+        run: |
+          markdownlint '**/*.md' \
+            --ignore node_modules \
+            --ignore .github \
+            --config .markdownlint.json || true
+        continue-on-error: true
+
+  validate-structure:
+    name: Validate Project Structure
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Check required files exist
+        run: |
+          test -f README.md || { echo "❌ README.md missing"; exit 1; }
+          test -f LICENSE || { echo "❌ LICENSE missing"; exit 1; }
+          test -f CONTRIBUTING.md || { echo "❌ CONTRIBUTING.md missing"; exit 1; }
+          test -f install.sh || { echo "❌ install.sh missing"; exit 1; }
+          test -f worktree-start.md || { echo "❌ worktree-start.md missing"; exit 1; }
+          test -f worktree-list.md || { echo "❌ worktree-list.md missing"; exit 1; }
+          test -f worktree-compare.md || { echo "❌ worktree-compare.md missing"; exit 1; }
+          test -f worktree-merge.md || { echo "❌ worktree-merge.md missing"; exit 1; }
+          echo "✅ All required files present"
+
+      - name: Validate YAML frontmatter in commands
+        run: |
+          for file in worktree-*.md; do
+            echo "Checking $file..."
+            head -n 5 "$file" | grep -q "^---$" || { echo "❌ $file missing YAML frontmatter"; exit 1; }
+            head -n 5 "$file" | grep -q "description:" || { echo "❌ $file missing description"; exit 1; }
+          done
+          echo "✅ All command files have valid frontmatter"
+
+      - name: Check for broken internal links (basic)
+        run: |
+          # Check if referenced files exist
+          for file in *.md; do
+            echo "Checking links in $file..."
+            # Extract markdown links and check if files exist
+            grep -o '\[.*\](.*.md)' "$file" | sed 's/.*(\(.*\))/\1/' | while read link; do
+              if [ ! -f "$link" ] && [[ "$link" != http* ]]; then
+                echo "⚠️  Warning: $file references missing file: $link"
+              fi
+            done
+          done
+
+  security-scan:
+    name: Security Scan
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Check for secrets in code
+        run: |
+          # Simple check for common secret patterns
+          if grep -r -E "(password|secret|api_key|token)\s*=\s*['\"][^'\"]+['\"]" --exclude-dir=.git --exclude-dir=node_modules .; then
+            echo "⚠️  Warning: Potential secrets found in code"
+            exit 1
+          fi
+          echo "✅ No obvious secrets detected"
+
+  test-command-syntax:
+    name: Test Command Bash Syntax
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Extract and test bash code blocks
+        run: |
+          for cmd_file in worktree-*.md; do
+            echo "Testing bash syntax in $cmd_file..."
+            # Extract bash code blocks and test syntax
+            awk '/```bash/,/```/ {if (!/```/) print}' "$cmd_file" > /tmp/test_script.sh
+            if [ -s /tmp/test_script.sh ]; then
+              bash -n /tmp/test_script.sh || {
+                echo "❌ Syntax error in $cmd_file"
+                exit 1
+              }
+            fi
+          done
+          echo "✅ All bash code blocks have valid syntax"
+
+  check-shellcheck:
+    name: ShellCheck Analysis
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Install ShellCheck
+        run: sudo apt-get install -y shellcheck
+
+      - name: Run ShellCheck on install.sh
+        run: |
+          shellcheck install.sh || true
+        continue-on-error: true
+
+  all-checks-passed:
+    name: All Checks Passed
+    runs-on: ubuntu-latest
+    needs: [validate-install-script, validate-structure, test-command-syntax, security-scan]
+
+    steps:
+      - name: Success
+        run: echo "✅ All CI checks passed!"

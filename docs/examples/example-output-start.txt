@@ -1,0 +1,33 @@
+$ /worktree-start rails "Add JWT authentication with refresh tokens"
+
+🤖 Smart Mode: Analyzing feature description...
+
+Analyzing: 'Add JWT authentication with refresh tokens'
+
+Generated branch name: feat/jwt-authentication-refresh
+
+✅ Branch name validated
+
+📍 Current location: /Users/dev/myapp (main)
+
+🌿 Creating new worktree at ../feat/jwt-authentication-refresh
+Preparing worktree (new branch 'feat/jwt-authentication-refresh')
+HEAD is now at a1b2c3d Initial commit
+
+✅ Worktree created successfully
+
+📝 Generating FEATURE.md with AI assistance...
+
+✅ FEATURE.md created with:
+   - Feature objectives
+   - Implementation checklist (12 items)
+   - Relevant files to review (8 files)
+   - Security considerations
+   - Testing strategy
+
+🎯 Next steps:
+   1. cd ../feat/jwt-authentication-refresh
+   2. Review FEATURE.md for implementation guide
+   3. Start with tests (TDD approach)
+
+💡 Tip: Use '/worktree-compare feat/jwt-authentication-refresh' before merging

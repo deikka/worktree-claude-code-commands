@@ -1,0 +1,89 @@
+$ /worktree-merge feat/jwt-authentication-refresh
+
+🔄 Merging Worktree: feat/jwt-authentication-refresh
+═══════════════════════════════════════════════════════════════
+
+🔍 PRE-FLIGHT CHECKS
+───────────────────────────────────────────────────────────────
+✅ Worktree exists: ../feat/jwt-authentication-refresh
+✅ Working directory is clean
+✅ On main branch
+✅ No uncommitted changes in target branch
+✅ Up to date with remote
+✅ No merge conflicts detected
+
+📊 CHANGES SUMMARY
+───────────────────────────────────────────────────────────────
+Branch: feat/jwt-authentication-refresh
+Commits ahead: 3
+Files changed: 12
+Lines added: +487
+Lines removed: -23
+
+⚠️  CONFIRMATION REQUIRED
+
+You are about to:
+  1. Merge feat/jwt-authentication-refresh into main (--no-ff)
+  2. Push to origin/main
+  3. Delete local branch feat/jwt-authentication-refresh
+  4. Delete remote branch origin/feat/jwt-authentication-refresh
+  5. Remove worktree directory ../feat/jwt-authentication-refresh
+
+This action cannot be easily undone.
+
+Continue? [y/N]: y
+
+🔀 MERGING
+───────────────────────────────────────────────────────────────
+Merging feat/jwt-authentication-refresh...
+Merge made by the 'ort' strategy.
+ app/services/authentication/jwt_service.rb       | 145 ++++++++++++++++++
+ app/models/refresh_token.rb                      |  28 ++++
+ app/controllers/api/v1/authentication_controller.rb | 78 +++++++++
+ config/routes.rb                                 |   5 +
+ db/migrate/20250113_create_refresh_tokens.rb     |  12 ++
+ spec/services/authentication/jwt_service_spec.rb |  89 +++++++++++
+ spec/models/refresh_token_spec.rb                |  67 ++++++++
+ spec/requests/api/v1/authentication_spec.rb      | 156 +++++++++++++++++++
+ 12 files changed, 580 insertions(+)
+
+✅ Merge commit created: a1b2c3d
+
+📤 PUSHING TO REMOTE
+───────────────────────────────────────────────────────────────
+Pushing to origin/main...
+To github.com:user/myapp.git
+   abc123f..a1b2c3d  main -> main
+✅ Pushed successfully
+
+🧹 CLEANUP
+───────────────────────────────────────────────────────────────
+Removing worktree '../feat/jwt-authentication-refresh'...
+✅ Worktree removed
+
+Deleting local branch 'feat/jwt-authentication-refresh'...
+✅ Local branch deleted
+
+Deleting remote branch 'origin/feat/jwt-authentication-refresh'...
+To github.com:user/myapp.git
+ - [deleted]         feat/jwt-authentication-refresh
+✅ Remote branch deleted
+
+═══════════════════════════════════════════════════════════════
+
+🎉 MERGE COMPLETED SUCCESSFULLY!
+
+Summary:
+  • Merged 3 commits from feat/jwt-authentication-refresh
+  • Added 487 lines across 12 files
+  • Pushed to origin/main
+  • Cleaned up all branches and worktree
+
+Current branch: main
+Current directory: /Users/dev/myapp
+
+💡 What's next?
+   • Verify the merge: git log --oneline -5
+   • Run tests: bin/rails test
+   • Deploy if needed
+   • Start next feature: /worktree-start rails "next feature"
