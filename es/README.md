@@ -2,8 +2,16 @@
 
 Sistema completo de gestión de git worktrees optimizado para desarrollo paralelo con Claude Code.
 
-![Version](https://img.shields.io/badge/version-1.0.0-blue)
-![License](https://img.shields.io/badge/license-MIT-green)
+[![Version](https://img.shields.io/badge/version-1.0.0-blue)](https://github.com/deikka/worktree-claude-code-commands/releases)
+[![License](https://img.shields.io/badge/license-MIT-green)](../LICENSE)
+[![CI](https://img.shields.io/github/actions/workflow/status/deikka/worktree-claude-code-commands/ci.yml?branch=main&label=CI)](https://github.com/deikka/worktree-claude-code-commands/actions)
+[![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg)](CONTRIBUTING.md)
+[![Claude Code](https://img.shields.io/badge/Claude%20Code-Compatible-8A2BE2)](https://docs.claude.com/en/docs/claude-code)
+[![Platform](https://img.shields.io/badge/platform-macOS%20%7C%20Linux-lightgrey)](#instalación)
+[![Documentation](https://img.shields.io/badge/docs-complete-success)](START_HERE.md)
+[![Languages](https://img.shields.io/badge/languages-English%20%7C%20Español-blue)](#idiomas)
+
+> 🇪🇸 **Español (actual)** | **[🇬🇧 English Documentation](../README.md)**
 
 ---
 
@@ -199,7 +207,7 @@ bin/rails test  # O tu comando de tests
 4. (Smart) Genera `FEATURE.md` con guía completa
 5. Setup tracking branch en remote
 
-**[Documentación completa →](./worktree-start.md)**
+**[Documentación completa →](worktree-start.md)**
 
 ---
 
@@ -225,7 +233,7 @@ bin/rails test  # O tu comando de tests
 - ⚠️ Detección de conflictos potenciales
 - 📋 Diff completo para review
 
-**[Documentación completa →](./worktree-compare.md)**
+**[Documentación completa →](worktree-compare.md)**
 
 ---
 
@@ -251,7 +259,7 @@ bin/rails test  # O tu comando de tests
 
 **⚠️ IMPORTANTE:** Siempre usa `/worktree-compare` antes de merge.
 
-**[Documentación completa →](./worktree-merge.md)**
+**[Documentación completa →](worktree-merge.md)**
 
 ---
 
@@ -276,7 +284,7 @@ bin/rails test  # O tu comando de tests
 /worktree-list prune
 ```
 
-**[Documentación completa →](./worktree-list.md)**
+**[Documentación completa →](worktree-list.md)**
 
 ---
 
@@ -286,18 +294,18 @@ bin/rails test  # O tu comando de tests
 
 | Documento | Audiencia | Tiempo Lectura |
 |-----------|-----------|----------------|
-| [`START_HERE.md`](./START_HERE.md) | **Principiantes** | 5 min |
-| [`CHEATSHEET.md`](./CHEATSHEET.md) | **Referencia rápida** | 2 min |
+| [`START_HERE.md`](START_HERE.md) | **Principiantes** | 5 min |
+| [`CHEATSHEET.md`](CHEATSHEET.md) | **Referencia rápida** | 2 min |
 | `README.md` (este archivo) | **Overview general** | 10 min |
 
 ### Por Comando
 
 | Comando | Documentación | Nivel |
 |---------|---------------|-------|
-| `/worktree-start` | [`worktree-start.md`](./worktree-start.md) | 📘 Detallado |
-| `/worktree-compare` | [`worktree-compare.md`](./worktree-compare.md) | 📘 Detallado |
-| `/worktree-merge` | [`worktree-merge.md`](./worktree-merge.md) | 📘 Detallado |
-| `/worktree-list` | [`worktree-list.md`](./worktree-list.md) | 📘 Detallado |
+| `/worktree-start` | [`worktree-start.md`](worktree-start.md) | 📘 Detallado |
+| `/worktree-compare` | [`worktree-compare.md`](worktree-compare.md) | 📘 Detallado |
+| `/worktree-merge` | [`worktree-merge.md`](worktree-merge.md) | 📘 Detallado |
+| `/worktree-list` | [`worktree-list.md`](worktree-list.md) | 📘 Detallado |
 
 ---
 
@@ -863,8 +871,8 @@ MIT License - Ver [`LICENSE`](./LICENSE) para detalles.
 ## Support
 
 **¿Necesitas ayuda?**
-1. Lee [`START_HERE.md`](./START_HERE.md) primero
-2. Consulta [`CHEATSHEET.md`](./CHEATSHEET.md) para referencia rápida
+1. Lee [`START_HERE.md`](START_HERE.md) primero
+2. Consulta [`CHEATSHEET.md`](CHEATSHEET.md) para referencia rápida
 3. Revisa este README
 4. Busca en sección [FAQ](#faq) y [Troubleshooting](#troubleshooting)
 5. Abre un issue si aún tienes problemas

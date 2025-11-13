@@ -509,14 +509,14 @@ A: Igual que branches normales: coordinación y pull/push regular.
 **Ya leíste esto?** Perfecto. Ahora:
 
 1. **Práctica:** Crea tu primer worktree con una feature real
-2. **Consulta:** Lee [`CHEATSHEET.md`](./CHEATSHEET.md) para referencia rápida
-3. **Profundiza:** Revisa [`README.md`](./README.md) para detalles avanzados
+2. **Consulta:** Lee [`CHEATSHEET.md`](CHEATSHEET.md) para referencia rápida
+3. **Profundiza:** Revisa [`README.md`](README.md) para detalles avanzados
 
 **Documentación completa de cada comando:**
-- [`worktree-start.md`](./worktree-start.md)
-- [`worktree-compare.md`](./worktree-compare.md)
-- [`worktree-merge.md`](./worktree-merge.md)
-- [`worktree-list.md`](./worktree-list.md)
+- [`worktree-start.md`](worktree-start.md)
+- [`worktree-compare.md`](worktree-compare.md)
+- [`worktree-merge.md`](worktree-merge.md)
+- [`worktree-list.md`](worktree-list.md)
 
 ---
 

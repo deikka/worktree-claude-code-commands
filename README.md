@@ -9,7 +9,9 @@ Complete git worktree management system optimized for parallel development with 
 [![Claude Code](https://img.shields.io/badge/Claude%20Code-Compatible-8A2BE2)](https://docs.claude.com/en/docs/claude-code)
 [![Platform](https://img.shields.io/badge/platform-macOS%20%7C%20Linux-lightgrey)](#installation)
 [![Documentation](https://img.shields.io/badge/docs-complete-success)](START_HERE.md)
-[![Languages](https://img.shields.io/badge/languages-English%20%7C%20Español-blue)](#)
+[![Languages](https://img.shields.io/badge/languages-English%20%7C%20Español-blue)](#languages)
+
+> **[🇪🇸 Documentación en Español](es/README.md)** | 🇬🇧 English (current)
 
 ---
 
@@ -25,6 +27,7 @@ Complete git worktree management system optimized for parallel development with 
 - [Best Practices](#best-practices)
 - [FAQ](#faq)
 - [Troubleshooting](#troubleshooting)
+- [Languages](#languages)
 - [Contributing](#contributing)
 
 ---
@@ -838,6 +841,32 @@ jobs:
       # Worktrees are transparent to CI
       # No special configuration required
 ```
+
+---
+
+## Languages
+
+This project is fully documented in multiple languages:
+
+### 🇬🇧 English (Current)
+Complete documentation in the root directory:
+- [README.md](README.md) - Main documentation
+- [START_HERE.md](START_HERE.md) - Quick start guide
+- [CHEATSHEET.md](CHEATSHEET.md) - Quick reference
+- [STACKS_GUIDE.md](STACKS_GUIDE.md) - Multi-stack guide
+- [CONTRIBUTING.md](CONTRIBUTING.md) - Contribution guidelines
+- And more...
+
+### 🇪🇸 Español
+Documentación completa en la carpeta `es/`:
+- [es/README.md](es/README.md) - Documentación principal
+- [es/START_HERE.md](es/START_HERE.md) - Guía de inicio rápido
+- [es/CHEATSHEET.md](es/CHEATSHEET.md) - Referencia rápida
+- [es/STACKS_GUIDE.md](es/STACKS_GUIDE.md) - Guía de múltiples stacks
+- [es/CONTRIBUTING.md](es/CONTRIBUTING.md) - Guía de contribución
+- Y más...
+
+**Want to contribute translations?** See [CONTRIBUTING.md](CONTRIBUTING.md) for guidelines!
 
 ---
 
