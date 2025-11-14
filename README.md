@@ -2,7 +2,7 @@
 
 Complete git worktree management system optimized for parallel development with Claude Code.
 
-[![Version](https://img.shields.io/badge/version-1.0.0-blue)](https://github.com/deikka/worktree-claude-code-commands/releases)
+[![Version](https://img.shields.io/badge/version-1.1.0-blue)](https://github.com/deikka/worktree-claude-code-commands/releases)
 [![License](https://img.shields.io/badge/license-MIT-green)](LICENSE)
 [![CI](https://img.shields.io/github/actions/workflow/status/deikka/worktree-claude-code-commands/ci.yml?branch=main&label=CI)](https://github.com/deikka/worktree-claude-code-commands/actions)
 [![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg)](CONTRIBUTING.md)
@@ -42,6 +42,31 @@ Want to see it in action? Check out these example outputs:
 - **[Merging & Cleanup](docs/examples/example-output-merge.txt)** - Safe merge with automatic cleanup
 
 > **Note:** Screenshots and recordings coming soon! See [SCREENSHOTS_GUIDE.md](SCREENSHOTS_GUIDE.md) for details.
+
+---
+
+## 🎉 What's New in v1.1.0
+
+**Latest Release:** January 14, 2025
+
+### 🐛 Critical Bug Fixes
+- **Fixed FEATURE.md generation** - Variables now properly expand in smart mode
+- **Fixed 6 additional bugs** - Improved stability and reliability
+
+### ✨ New Features
+- **📦 Extended Stack Support** - Now supports 7 stacks (rails, wordpress, node, python, go, rust, generic)
+- **🔍 Verbose Mode** - Use `-v` flag for detailed command execution: `/worktree-start -v rails "feature"`
+- **⚙️ Configurable Paths** - Set custom worktree locations via `.worktree-config.json`
+- **🏷️ Stack Aliases** - Use shortcuts: `wp`, `js`, `ts`, `py` instead of full names
+- **📝 Local Config** - Per-developer settings with `.worktree-config.local.json`
+
+### 🔧 Improvements
+- Comprehensive prerequisite validation (git version, jq availability)
+- Better error messages with installation instructions
+- Enhanced branch name validation
+- Improved REPO_ROOT calculation in merge operations
+
+**[View Complete Changelog →](CHANGELOG.md)**
 
 ---
 
@@ -114,9 +139,21 @@ cd ../hotfix/urgent-bug
 
 ### Prerequisites
 
-- Git 2.15+ (for worktrees)
+**Required:**
+- Git 2.5+ (2.15+ recommended for best experience)
 - Claude Code installed
 - Existing git project
+
+**Optional (for advanced features):**
+- `jq` - Enables multi-stack support and configuration parsing
+  ```bash
+  # macOS
+  brew install jq
+
+  # Linux
+  sudo apt-get install jq  # Debian/Ubuntu
+  sudo yum install jq      # Red Hat/CentOS
+  ```
 
 ### Steps
 
@@ -215,6 +252,7 @@ See **[STACKS_GUIDE.md](STACKS_GUIDE.md)** for detailed stack configuration.
 ```bash
 /worktree-start <stack> "feature description"  # Smart mode (recommended)
 /worktree-start <stack> branch-name            # Manual mode
+/worktree-start -v <stack> "description"       # Verbose mode (shows all commands)
 ```
 
 **Examples:**
@@ -223,15 +261,15 @@ See **[STACKS_GUIDE.md](STACKS_GUIDE.md)** for detailed stack configuration.
 /worktree-start rails "Add OAuth2 authentication with Google and GitHub"
 # → Creates: feat/oauth2-auth-google-github + FEATURE.md
 
-# Node.js smart mode
-/worktree-start node "Implement websocket server with Redis pub/sub"
-# → Creates: feat/websocket-redis-pubsub + FEATURE.md
+# Node.js smart mode with verbose output
+/worktree-start -v node "Implement websocket server with Redis pub/sub"
+# → Creates: feat/websocket-redis-pubsub + FEATURE.md (shows all bash commands)
 
-# Python smart mode
-/worktree-start python "Add ML model for user recommendations"
+# Python smart mode (using alias)
+/worktree-start py "Add ML model for user recommendations"
 # → Creates: feat/ml-user-recommendations + FEATURE.md
 
-# WordPress manual mode
+# WordPress manual mode (using alias)
 /worktree-start wp custom-widget
 # → Creates: feature/custom-widget (no FEATURE.md)
 
@@ -807,7 +845,33 @@ cd ~/projects/project-b
 
 ### Custom Configurations
 
-Edit commands:
+**Per-Developer Local Settings (New in v1.1.0):**
+
+```bash
+# Create local configuration (not committed)
+cp .worktree-config.local.json.example .worktree-config.local.json
+
+# Edit your personal settings
+nano .worktree-config.local.json
+```
+
+**Example local config:**
+```json
+{
+  "defaults": {
+    "worktree_base": "/Users/yourname/worktrees",  // Custom location
+    "auto_push": false                              // Disable auto-push
+  },
+  "stacks": {
+    "custom-stack": {
+      "name": "My Custom Stack",
+      "branch_prefix": "feature"
+    }
+  }
+}
+```
+
+**Edit commands directly:**
 
 ```bash
 # Commands are in:

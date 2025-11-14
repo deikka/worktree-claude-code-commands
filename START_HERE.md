@@ -1,5 +1,7 @@
 # 🚀 START HERE: Git Worktrees with Claude Code
 
+**Version 1.1.0** - Now with 7 stack support, verbose mode, and local configuration!
+
 This guide will help you get started in **2 minutes** with the worktree system.
 
 ## ⚡ Quick Start (60 seconds)
@@ -71,7 +73,25 @@ cd ../hotfix/urgent-bug
 
 **Smart Mode (RECOMMENDED):**
 ```bash
+# Rails
 /worktree-start rails "Add JWT authentication with refresh tokens"
+
+# Node.js (with aliases)
+/worktree-start node "Implement websocket server"
+/worktree-start js "Add GraphQL API"  # alias
+
+# Python
+/worktree-start python "Add ML model for recommendations"
+/worktree-start py "Fix data pipeline"  # alias
+
+# WordPress
+/worktree-start wordpress "Create custom blocks"
+/worktree-start wp "Fix admin panel"  # alias
+
+# Other stacks
+/worktree-start go "Add microservice"
+/worktree-start rust "Optimize parser"
+/worktree-start generic "Update documentation"
 ```
 - Claude analyzes your description
 - Generates appropriate branch name
@@ -84,6 +104,13 @@ cd ../hotfix/urgent-bug
 ```
 - Uses the name you specify directly
 - Faster but without AI assistant
+
+**Verbose Mode (for debugging):**
+```bash
+/worktree-start -v rails "Add feature"
+```
+- Shows all bash commands being executed
+- Useful for troubleshooting
 
 ### 2. `/worktree-compare` - View changes before merge
 

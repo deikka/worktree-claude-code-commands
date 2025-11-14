@@ -1,6 +1,6 @@
 # Git Worktrees Cheatsheet
 
-Quick reference for worktree commands with Claude Code.
+**Version 1.1.0** - Quick reference for worktree commands with Claude Code.
 
 ---
 
@@ -26,15 +26,21 @@ Quick reference for worktree commands with Claude Code.
 
 | Command | Description | Example |
 |---------|-------------|---------|
-| `/worktree-start <type> "description"` | Create worktree (smart) | `/worktree-start rails "Add JWT auth"` |
-| `/worktree-start <type> name` | Create worktree (manual) | `/worktree-start rails user-auth` |
+| `/worktree-start <stack> "description"` | Create worktree (smart) | `/worktree-start rails "Add JWT auth"` |
+| `/worktree-start <stack> name` | Create worktree (manual) | `/worktree-start node user-auth` |
+| `/worktree-start -v <stack> "desc"` | Create worktree (verbose) | `/worktree-start -v py "Add feature"` |
 | `/worktree-compare [branch]` | Compare changes | `/worktree-compare main` |
 | `/worktree-merge [branch]` | Merge and cleanup | `/worktree-merge main` |
 | `/worktree-list` | List worktrees | `/worktree-list` |
 | `/worktree-list cleanup` | Clean merged | `/worktree-list cleanup` |
 | `/worktree-list prune` | Clean stale | `/worktree-list prune` |
 
-**💡 Pro Tip:** Use smart mode (with description) - Claude generates the name automatically
+**💡 Pro Tips:**
+- Use smart mode (with description) - Claude generates the name automatically
+- Use `-v` flag for verbose output when debugging
+- Stack aliases: `wp`→wordpress, `js`/`ts`→node, `py`→python
+
+**Supported Stacks:** `rails`, `wordpress`/`wp`, `node`/`js`/`ts`, `python`/`py`, `go`, `rust`, `generic`
 
 ---
 

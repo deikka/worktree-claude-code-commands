@@ -1,5 +1,7 @@
 # 🚀 START HERE: Git Worktrees con Claude Code
 
+**Versión 1.1.0** - ¡Ahora con soporte para 7 stacks, modo verbose y configuración local!
+
 Esta guía te ayudará a empezar en **2 minutos** con el sistema de worktrees.
 
 ## ⚡ Quick Start (60 segundos)

@@ -1,6 +1,6 @@
 # Git Worktrees Cheatsheet
 
-Referencia rápida para comandos de worktrees con Claude Code.
+**Versión 1.1.0** - Referencia rápida para comandos de worktrees con Claude Code.
 
 ---
 

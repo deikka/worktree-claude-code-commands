@@ -2,7 +2,7 @@
 
 Sistema completo de gestión de git worktrees optimizado para desarrollo paralelo con Claude Code.
 
-[![Version](https://img.shields.io/badge/version-1.0.0-blue)](https://github.com/deikka/worktree-claude-code-commands/releases)
+[![Version](https://img.shields.io/badge/version-1.1.0-blue)](https://github.com/deikka/worktree-claude-code-commands/releases)
 [![License](https://img.shields.io/badge/license-MIT-green)](../LICENSE)
 [![CI](https://img.shields.io/github/actions/workflow/status/deikka/worktree-claude-code-commands/ci.yml?branch=main&label=CI)](https://github.com/deikka/worktree-claude-code-commands/actions)
 [![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg)](CONTRIBUTING.md)
@@ -28,6 +28,31 @@ Sistema completo de gestión de git worktrees optimizado para desarrollo paralel
 - [FAQ](#faq)
 - [Troubleshooting](#troubleshooting)
 - [Contributing](#contributing)
+
+---
+
+## 🎉 Novedades en v1.1.0
+
+**Última versión:** 14 de enero de 2025
+
+### 🐛 Correcciones Críticas
+- **Corregido bug de generación de FEATURE.md** - Las variables ahora se expanden correctamente en modo smart
+- **6 bugs adicionales corregidos** - Mayor estabilidad y confiabilidad
+
+### ✨ Nuevas Funcionalidades
+- **📦 Soporte Extendido de Stacks** - Ahora soporta 7 stacks (rails, wordpress, node, python, go, rust, generic)
+- **🔍 Modo Verbose** - Usa flag `-v` para ver comandos en detalle: `/worktree-start -v rails "feature"`
+- **⚙️ Rutas Configurables** - Define ubicaciones personalizadas de worktrees vía `.worktree-config.json`
+- **🏷️ Aliases de Stacks** - Usa atajos: `wp`, `js`, `ts`, `py` en lugar de nombres completos
+- **📝 Configuración Local** - Settings por desarrollador con `.worktree-config.local.json`
+
+### 🔧 Mejoras
+- Validación completa de prerequisitos (versión de git, disponibilidad de jq)
+- Mejores mensajes de error con instrucciones de instalación
+- Validación mejorada de nombres de branch
+- Cálculo mejorado de REPO_ROOT en operaciones de merge
+
+**[Ver Changelog Completo →](../CHANGELOG.md)**
 
 ---
 
