@@ -3,7 +3,7 @@
   "_usage": "Local overrides are merged with .worktree-config.json",
   "_note": ".worktree-config.local.json should be added to .gitignore (per-developer settings)",
 
-  "version": "1.0.0",
+  "version": "1.1.0",
 
   "stacks": {
     "custom-stack-example": {
