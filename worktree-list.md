@@ -104,14 +104,18 @@ if [ "$1" = "cleanup" ]; then
   
   echo ""
   REMOVED_COUNT=0
-  
-  echo "$MERGED_BRANCHES" | while read branch; do
+
+  # Use here-string to avoid subshell (pipe creates subshell, variable changes are lost)
+  while IFS= read -r branch; do
     # Remove leading/trailing whitespace
     branch=$(echo "$branch" | xargs)
-    
+
+    # Skip empty lines
+    [ -z "$branch" ] && continue
+
     # Check if worktree exists for this branch
     WORKTREE_PATH=$(git worktree list | grep "\[$branch\]" | awk '{print $1}')
-    
+
     if [ -n "$WORKTREE_PATH" ]; then
       echo "🗑️  Removing worktree: $WORKTREE_PATH ($branch)"
       git worktree remove "$WORKTREE_PATH" --force 2>/dev/null || {
@@ -120,11 +124,11 @@ if [ "$1" = "cleanup" ]; then
       }
       REMOVED_COUNT=$((REMOVED_COUNT + 1))
     fi
-    
+
     # Delete the branch
     echo "🗑️  Deleting branch: $branch"
     git branch -d "$branch" 2>/dev/null || git branch -D "$branch"
-  done
+  done <<< "$MERGED_BRANCHES"
   
   # Prune worktree references
   git worktree prune

@@ -127,10 +127,23 @@ echo ""
 ### 4. Navigate to Main Repository
 
 ```bash
-REPO_ROOT=$(git rev-parse --show-toplevel | sed 's/\/\.git\/worktrees\/.*//')
+# Get worktree path before changing directories
 WORKTREE_PATH=$(pwd)
 
+# Get main repository root from worktree
+# --git-common-dir returns path to .git or .git/worktrees/<name>
+COMMON_DIR=$(git rev-parse --git-common-dir)
+# Remove .git suffix to get repo root
+REPO_ROOT=$(echo "$COMMON_DIR" | sed 's/\.git.*//' | sed 's/\/$//')
+
+# Fallback: if in main repo already, git-common-dir returns .git
+if [ "$COMMON_DIR" = ".git" ]; then
+  REPO_ROOT=$(git rev-parse --show-toplevel)
+fi
+
 echo "🚶 Navigating to main repository..."
+echo "📍 From: $WORKTREE_PATH"
+echo "📍 To: $REPO_ROOT"
 cd "$REPO_ROOT"
 
 if [ "$(git branch --show-current)" != "$TARGET_BRANCH" ]; then

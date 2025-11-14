@@ -145,6 +145,7 @@
     }
   },
   "defaults": {
+    "worktree_base": "..",
     "branch_separator": "/",
     "max_branch_length": 50,
     "merge_strategy": "no-ff",

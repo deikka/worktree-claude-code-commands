@@ -7,11 +7,12 @@ allowed-tools: [bash_tool]
 
 Initialize a new git worktree to work on a feature in parallel with your current work.
 
-**Usage:** `/worktree-start [rails|wp] "feature description"` (SMART MODE - recommended)
-**Alternative:** `/worktree-start [rails|wp] branch-name` (manual mode)
+**Usage:** `/worktree-start <stack> "feature description"` (SMART MODE - recommended)
+**Alternative:** `/worktree-start <stack> branch-name` (manual mode)
+**Debug:** `/worktree-start -v <stack> "feature description"` (verbose mode - shows all commands)
 
 **Arguments:**
-- `$1`: Project type (`rails` or `wp`)
+- `$1`: Project type/stack (`rails`, `wordpress`/`wp`, `node`/`js`/`ts`, `python`/`py`, `go`, `rust`, `generic`)
 - `$2`: Feature description (quoted string) OR branch name (single word)
 
 ## Smart Mode vs Manual Mode
@@ -38,21 +39,143 @@ Initialize a new git worktree to work on a feature in parallel with your current
 **CRITICAL:** Before proceeding, verify:
 1. Working directory is clean or has stashable changes
 2. Feature description/name is provided and valid
-3. Project type is either 'rails' or 'wp'
+3. Project type is valid (see available stacks in `.worktree-config.json`)
 4. Not already in a worktree directory
+5. `.worktree-config.json` exists in repository root
 
 ## Process
 
-### 1. Parse Arguments and Detect Mode
+### 1. Parse Debug/Verbose Flags
+
+```bash
+# Support for verbose mode: /worktree-start -v rails "feature"
+VERBOSE=false
+ORIGINAL_ARGS=("$@")
+
+# Check for verbose flag in any position
+for arg in "$@"; do
+  if [[ "$arg" == "-v" || "$arg" == "--verbose" ]]; then
+    VERBOSE=true
+    # Remove verbose flag from arguments
+    set -- "${@/$arg/}"
+  fi
+done
+
+# Enable bash debugging if verbose mode
+if [ "$VERBOSE" = true ]; then
+  echo "🔍 Verbose mode enabled"
+  set -x  # Show all commands being executed
+fi
+```
+
+### 2. Validate Prerequisites and Git Repository
+
+```bash
+# Check git is installed
+if ! command -v git &> /dev/null; then
+  echo "❌ Error: git is not installed"
+  echo "💡 Install git first:"
+  echo "   macOS:  brew install git  or  xcode-select --install"
+  echo "   Linux:  sudo apt-get install git  or  sudo yum install git"
+  echo "   Manual: https://git-scm.com/downloads"
+  exit 1
+fi
+
+# Check git version (worktrees require git 2.5+, recommend 2.15+)
+GIT_VERSION=$(git --version | grep -oE '[0-9]+\.[0-9]+' | head -1)
+GIT_MAJOR=$(echo "$GIT_VERSION" | cut -d. -f1)
+GIT_MINOR=$(echo "$GIT_VERSION" | cut -d. -f2)
+
+if [ "$GIT_MAJOR" -lt 2 ] || ([ "$GIT_MAJOR" -eq 2 ] && [ "$GIT_MINOR" -lt 5 ]); then
+  echo "❌ Error: git version too old ($GIT_VERSION)"
+  echo "💡 git worktrees require git 2.5 or later"
+  echo "   Current: $GIT_VERSION"
+  echo "   Please upgrade git"
+  exit 1
+fi
+
+if [ "$GIT_MAJOR" -eq 2 ] && [ "$GIT_MINOR" -lt 15 ]; then
+  echo "⚠️  Warning: git $GIT_VERSION detected (works, but 2.15+ recommended)"
+fi
+
+# Verify not already in a worktree
+CURRENT_GIT_DIR=$(git rev-parse --git-common-dir 2>/dev/null)
+
+if [ $? -ne 0 ]; then
+  echo "❌ Error: Not in a git repository"
+  echo "💡 Navigate to a git repository first"
+  exit 1
+fi
+
+# Check if in a worktree (common-dir contains .git/worktrees/)
+if [[ "$CURRENT_GIT_DIR" == *".git/worktrees"* ]]; then
+  CURRENT_WORKTREE_BRANCH=$(git branch --show-current)
+  # Get main repo path
+  MAIN_REPO=$(echo "$CURRENT_GIT_DIR" | sed 's/\.git\/worktrees.*//')
+
+  echo "❌ Error: You're already in a worktree"
+  echo "📍 Current worktree: $CURRENT_WORKTREE_BRANCH"
+  echo ""
+  echo "💡 Navigate to the main repository first:"
+  echo "   cd $MAIN_REPO"
+  echo ""
+  echo "Or finish/merge this worktree before creating a new one:"
+  echo "   /worktree-merge"
+  exit 1
+fi
+
+echo "✅ Running from main repository"
+```
+
+### 3. Parse Arguments and Detect Mode
 
 ```bash
 PROJECT_TYPE="$1"
 FEATURE_INPUT="$2"
 
-# Validate project type
-if [[ "$PROJECT_TYPE" != "rails" && "$PROJECT_TYPE" != "wp" ]]; then
-  echo "❌ Error: Project type must be 'rails' or 'wp'"
+# Validate .worktree-config.json exists
+if [ ! -f ".worktree-config.json" ]; then
+  echo "❌ Error: .worktree-config.json not found"
+  echo "💡 Run this from repository root or create config file"
   exit 1
+fi
+
+# Check jq is available (recommended for advanced features)
+if ! command -v jq &> /dev/null; then
+  echo "⚠️  Warning: jq not installed, using basic validation"
+  echo "💡 For full stack support, install jq:"
+  echo "   macOS:  brew install jq"
+  echo "   Linux:  sudo apt-get install jq  or  sudo yum install jq"
+  echo "   Manual: https://stedolan.github.io/jq/download/"
+  echo ""
+
+  # Fallback to basic validation
+  if [[ "$PROJECT_TYPE" != "rails" && "$PROJECT_TYPE" != "wordpress" && "$PROJECT_TYPE" != "wp" ]]; then
+    echo "❌ Error: Project type must be 'rails' or 'wordpress'"
+    echo "💡 Install jq to use other stacks (node, python, go, rust, generic)"
+    exit 1
+  fi
+else
+  # Get available stacks from config
+  AVAILABLE_STACKS=$(jq -r '.stacks | keys[]' .worktree-config.json 2>/dev/null)
+
+  # Map common aliases to full stack names
+  case "$PROJECT_TYPE" in
+    wp) PROJECT_TYPE="wordpress" ;;
+    js|ts|javascript|typescript) PROJECT_TYPE="node" ;;
+    py) PROJECT_TYPE="python" ;;
+  esac
+
+  # Validate project type against available stacks
+  if ! echo "$AVAILABLE_STACKS" | grep -q "^${PROJECT_TYPE}$"; then
+    echo "❌ Error: Unknown project type '$PROJECT_TYPE'"
+    echo ""
+    echo "📋 Available stacks:"
+    echo "$AVAILABLE_STACKS" | sed 's/^/  - /'
+    echo ""
+    echo "💡 Aliases: wp→wordpress, js/ts→node, py→python"
+    exit 1
+  fi
 fi
 
 # Detect mode: if input contains spaces or special chars, it's smart mode
@@ -67,7 +190,7 @@ else
 fi
 ```
 
-### 2. Smart Mode: Generate Branch Name
+### 4. Smart Mode: Generate Branch Name
 
 **Only if MODE="smart":**
 
@@ -91,15 +214,45 @@ echo "Respond with ONLY the branch name, nothing else."
 - Rails: `feat/jwt-authentication-refresh` or `fix/auth-token-expiry`
 - WordPress: `feature/jwt-auth-system` or `bugfix/login-validation`
 
-**CRITICAL:** Claude must validate the generated name:
-- Matches project type prefix
-- Is lowercase with hyphens only
-- Is between 10-50 characters
-- Is descriptive and clear
+**CRITICAL:** After Claude generates the branch name, validate it programmatically:
 
-Store result in `$BRANCH_NAME`
+```bash
+# Store result in $BRANCH_NAME (received from Claude's response)
+# Example: BRANCH_NAME="feat/jwt-authentication-refresh"
 
-### 3. Validate Branch Doesn't Exist
+# Validate branch name is not empty
+if [ -z "$BRANCH_NAME" ]; then
+  echo "❌ Error: No branch name generated"
+  echo "💡 Please provide a feature description or use manual mode"
+  exit 1
+fi
+
+# Validate format (lowercase alphanumeric with /-_ only)
+if ! [[ "$BRANCH_NAME" =~ ^[a-z0-9/_-]+$ ]]; then
+  echo "❌ Error: Invalid branch name format: $BRANCH_NAME"
+  echo "💡 Branch names must be lowercase alphanumeric with /-_ only"
+  echo "   Example: feat/user-authentication"
+  exit 1
+fi
+
+# Validate length
+if [ ${#BRANCH_NAME} -gt 50 ]; then
+  echo "❌ Error: Branch name too long (${#BRANCH_NAME} chars, max 50)"
+  echo "💡 Try a more concise description"
+  exit 1
+fi
+
+if [ ${#BRANCH_NAME} -lt 5 ]; then
+  echo "❌ Error: Branch name too short (${#BRANCH_NAME} chars, min 5)"
+  exit 1
+fi
+
+echo "✅ Generated branch name: $BRANCH_NAME"
+```
+
+Store validated result in `$BRANCH_NAME`
+
+### 5. Validate Branch Doesn't Exist
 
 ```bash
 if git show-ref --verify --quiet "refs/heads/$BRANCH_NAME"; then
@@ -114,7 +267,7 @@ if [ -d "../$BRANCH_NAME" ]; then
 fi
 ```
 
-### 4. Save Current State
+### 6. Save Current State
 
 ```bash
 CURRENT_BRANCH=$(git branch --show-current)
@@ -129,26 +282,39 @@ if ! git diff-index --quiet HEAD --; then
 fi
 ```
 
-### 5. Create Worktree
+### 7. Create Worktree
 
 ```bash
-echo "🌿 Creating new worktree at ../$BRANCH_NAME"
-git worktree add -b "$BRANCH_NAME" "../$BRANCH_NAME"
+# Get worktree base path from config (default to parent directory)
+if command -v jq &> /dev/null && [ -f ".worktree-config.json" ]; then
+  WORKTREE_BASE=$(jq -r '.defaults.worktree_base // ".."' .worktree-config.json)
+else
+  WORKTREE_BASE=".."
+fi
+
+# Build full worktree path
+WORKTREE_PATH="$WORKTREE_BASE/$BRANCH_NAME"
+
+echo "🌿 Creating new worktree at $WORKTREE_PATH"
+git worktree add -b "$BRANCH_NAME" "$WORKTREE_PATH"
 
 if [ $? -ne 0 ]; then
   echo "❌ Failed to create worktree"
+  echo "💡 Check that the path is valid and accessible"
   exit 1
 fi
+
+echo "✅ Worktree created at: $WORKTREE_PATH"
 ```
 
-### 6. Smart Mode: Generate FEATURE.md
+### 8. Smart Mode: Generate FEATURE.md
 
 **Only if MODE="smart":**
 
 ```bash
-cd "../$BRANCH_NAME"
+cd "$WORKTREE_PATH"
 
-cat > FEATURE.md << 'EOF'
+cat > FEATURE.md << EOF
 # Feature: $FEATURE_DESCRIPTION
 
 **Branch:** $BRANCH_NAME
@@ -214,16 +380,31 @@ echo "📝 Created FEATURE.md with implementation guidance"
 - Include real examples from the codebase when possible
 - Adapt checklist to the actual feature complexity
 
-### 7. Setup Branch Tracking
+### 9. Setup Branch Tracking
 
 ```bash
 # Set upstream tracking
-git push -u origin "$BRANCH_NAME"
+echo "📤 Pushing branch to remote..."
+if git push -u origin "$BRANCH_NAME" 2>&1; then
+  echo "✅ Branch pushed to origin"
+else
+  EXIT_CODE=$?
+  echo ""
+  echo "⚠️  Warning: Could not push to remote (exit code: $EXIT_CODE)"
+  echo "💡 This is not critical - you can push later with:"
+  echo "   git push -u origin $BRANCH_NAME"
+  echo ""
+  echo "Common causes:"
+  echo "  - No internet connection"
+  echo "  - Remote repository not configured"
+  echo "  - Insufficient permissions"
+  echo ""
+fi
 
 echo "✅ Worktree created successfully!"
 ```
 
-### 8. Final Instructions
+### 10. Final Instructions
 
 ```bash
 echo ""
@@ -231,7 +412,7 @@ echo "━━━━━━━━━━━━━━━━━━━━━━━━�
 echo "✅ Worktree Setup Complete!"
 echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
 echo ""
-echo "📁 New worktree location: ../$BRANCH_NAME"
+echo "📁 New worktree location: $WORKTREE_PATH"
 echo "🌿 Branch: $BRANCH_NAME"
 echo "📍 Current location remains: $CURRENT_BRANCH"
 echo ""
@@ -240,7 +421,7 @@ if [ "$MODE" = "smart" ]; then
   echo ""
 fi
 echo "🔄 To switch between worktrees:"
-echo "   cd ../$BRANCH_NAME     # Work on new feature"
+echo "   cd $WORKTREE_PATH     # Work on new feature"
 echo "   cd $REPO_ROOT          # Back to main workspace"
 echo ""
 echo "📊 Compare changes later with:"

@@ -1,0 +1,57 @@
+{
+  "_comment": "Copy this file to .worktree-config.local.json and customize for your project",
+  "_usage": "Local overrides are merged with .worktree-config.json",
+  "_note": ".worktree-config.local.json should be added to .gitignore (per-developer settings)",
+
+  "version": "1.0.0",
+
+  "stacks": {
+    "custom-stack-example": {
+      "name": "My Custom Stack",
+      "branch_prefix": "feature",
+      "branch_patterns": {
+        "feature": "feature",
+        "bugfix": "bugfix",
+        "enhancement": "enhancement",
+        "hotfix": "hotfix"
+      },
+      "checks": [
+        "tests",
+        "linting"
+      ],
+      "suggested_files": [
+        "src/**/*.ext",
+        "config/**/*"
+      ]
+    }
+  },
+
+  "defaults": {
+    "_comment_worktree_base": "Override where worktrees are created (default: .. = sibling directory)",
+    "worktree_base": "..",
+
+    "_comment_branch_separator": "Character used between prefix and name (default: /)",
+    "branch_separator": "/",
+
+    "_comment_max_branch_length": "Maximum characters for branch names (default: 50)",
+    "max_branch_length": 50,
+
+    "_comment_merge_strategy": "Git merge strategy: no-ff, ff-only, or squash (default: no-ff)",
+    "merge_strategy": "no-ff",
+
+    "_comment_auto_push": "Automatically push branches to remote (default: true)",
+    "auto_push": true,
+
+    "_comment_auto_cleanup": "Automatically cleanup worktrees after merge (default: true)",
+    "auto_cleanup": true
+  },
+
+  "custom_instructions": {
+    "_examples": [
+      "To add a custom stack: Copy one of the stack configs from .worktree-config.json",
+      "To disable auto-push: Set defaults.auto_push to false",
+      "To change worktree location: Set defaults.worktree_base to your preferred path",
+      "To use different merge strategy: Set defaults.merge_strategy to 'squash' or 'ff-only'"
+    ]
+  }
+}

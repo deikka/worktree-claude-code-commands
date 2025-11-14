@@ -30,6 +30,9 @@ node_modules/
 .env
 .env.local
 
+# Personal worktree configuration (per-developer)
+.worktree-config.local.json
+
 # Personal notes (not to be committed)
 notes.txt
 TODO.txt
