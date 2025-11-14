@@ -40,10 +40,10 @@ Sistema completo de gestión de git worktrees optimizado para desarrollo paralel
 - **6 bugs adicionales corregidos** - Mayor estabilidad y confiabilidad
 
 ### ✨ Nuevas Funcionalidades
-- **📦 Soporte Extendido de Stacks** - Ahora soporta 7 stacks (rails, wordpress, node, python, go, rust, generic)
+- **📦 Soporte Extendido de Stacks** - Ahora soporta 7 stacks (rails, php, node, python, go, rust, generic)
 - **🔍 Modo Verbose** - Usa flag `-v` para ver comandos en detalle: `/worktree-start -v rails "feature"`
 - **⚙️ Rutas Configurables** - Define ubicaciones personalizadas de worktrees vía `.worktree-config.json`
-- **🏷️ Aliases de Stacks** - Usa atajos: `wp`, `js`, `ts`, `py` en lugar de nombres completos
+- **🏷️ Aliases de Stacks** - Usa atajos: `js`, `ts`, `py` en lugar de nombres completos
 - **📝 Configuración Local** - Settings por desarrollador con `.worktree-config.local.json`
 
 ### 🔧 Mejoras
@@ -64,11 +64,12 @@ Un conjunto de **slash commands para Claude Code** que hacen el trabajo con git 
 
 **Este sistema** elimina toda la complejidad de gestionar worktrees manualmente, proporcionando:
 
-✅ Creación inteligente de worktrees con AI assistance  
-✅ Comparación visual de cambios antes de merge  
-✅ Merge seguro con cleanup automático  
-✅ Gestión y mantenimiento sin fricción  
-✅ Soporte específico para Rails y WordPress
+✅ Creación inteligente de worktrees con AI assistance
+✅ Comparación visual de cambios antes de merge
+✅ Merge seguro con cleanup automático
+✅ Gestión y mantenimiento sin fricción
+✅ Soporte multi-stack (Rails, PHP, Node.js, Python, Go, Rust, y más)
+✅ Configuración extensible para stacks personalizados
 
 ---
 
@@ -124,10 +125,21 @@ cd ../hotfix/urgent-bug
 
 ### Prerrequisitos
 
-- Git 2.15+ (para worktrees)
+**Requerido:**
+- Git 2.5+ (2.15+ recomendado para mejor experiencia)
 - Claude Code instalado
 - Proyecto git existente
-- Rails 8.0+ o WordPress/PHP 8.2+ (opcional pero recomendado)
+
+**Opcional (para funcionalidades avanzadas):**
+- `jq` - Habilita soporte multi-stack y parsing de configuración
+  ```bash
+  # macOS
+  brew install jq
+
+  # Linux
+  sudo apt-get install jq  # Debian/Ubuntu
+  sudo yum install jq      # Red Hat/CentOS
+  ```
 
 ### Pasos
 
@@ -193,14 +205,27 @@ bin/rails test  # O tu comando de tests
 ### Comando Más Común (80% de uso)
 
 ```bash
-/worktree-start [rails|wp] "Descripción de tu feature"
+/worktree-start <stack> "Descripción de tu feature"
 ```
+
+**Stacks Soportados:**
+- `rails` - Ruby on Rails (totalmente optimizado)
+- `php` - Proyectos PHP (totalmente optimizado - WordPress, Laravel, Symfony, etc.)
+- `node`, `js`, `ts` - Node.js / JavaScript / TypeScript
+- `python` o `py` - Proyectos Python
+- `go` - Proyectos Go
+- `rust` - Proyectos Rust
+- `generic` - Cualquier otro tipo de proyecto
+
+> **💡 Tip:** Para frameworks PHP (WordPress, Laravel, Symfony), consulta `.worktree-config.examples.json` para configuraciones listas para usar.
 
 **Smart Mode Features:**
 - Claude analiza tu descripción
-- Genera nombre de rama automáticamente
-- Crea `FEATURE.md` con checklist y context
+- Genera nombre de rama automáticamente (convenciones según stack)
+- Crea `FEATURE.md` con checklist y contexto
 - Sugiere archivos relevantes para empezar
+
+Consulta **[STACKS_GUIDE.md](../STACKS_GUIDE.md)** para configuración detallada de stacks.
 
 ---
 
@@ -210,8 +235,9 @@ bin/rails test  # O tu comando de tests
 
 **Sintaxis:**
 ```bash
-/worktree-start [rails|wp] "feature description"  # Smart mode (recomendado)
-/worktree-start [rails|wp] branch-name           # Manual mode
+/worktree-start <stack> "feature description"  # Smart mode (recomendado)
+/worktree-start <stack> branch-name           # Manual mode
+/worktree-start -v <stack> "description"      # Modo verbose (muestra todos los comandos)
 ```
 
 **Ejemplos:**
@@ -220,9 +246,21 @@ bin/rails test  # O tu comando de tests
 /worktree-start rails "Add OAuth2 authentication with Google and GitHub"
 # → Crea: feat/oauth2-auth-google-github + FEATURE.md
 
-# WordPress manual mode
-/worktree-start wp custom-widget
-# → Crea: custom-widget (sin FEATURE.md)
+# Node.js smart mode con salida verbose
+/worktree-start -v node "Implement websocket server with Redis pub/sub"
+# → Crea: feat/websocket-redis-pubsub + FEATURE.md (muestra todos los comandos bash)
+
+# Python smart mode (usando alias)
+/worktree-start py "Add ML model for user recommendations"
+# → Crea: feat/ml-user-recommendations + FEATURE.md
+
+# PHP manual mode
+/worktree-start php custom-widget
+# → Crea: feat/custom-widget (sin FEATURE.md)
+
+# Proyecto genérico
+/worktree-start generic "Add documentation"
+# → Crea: feat/add-documentation + FEATURE.md
 ```
 
 **Qué hace:**
@@ -533,7 +571,7 @@ cd ../worktree-b
 bin/rails test
 bundle exec rubocop
 
-# WordPress
+# PHP
 npm run build
 vendor/bin/phpunit  # si configurado
 ```
@@ -746,26 +784,28 @@ chmod +x install.sh
 
 ---
 
-### WordPress Projects
+### Proyectos PHP
 
 **Convenciones de nombres:**
-- `feature/*` - Nueva feature
-- `bugfix/*` - Bug fix
-- `enhancement/*` - Mejora
+- `feat/*` - Nueva feature (default)
+- `fix/*` - Bug fix
+- `refactor/*` - Refactorización
 - `hotfix/*` - Critical fix
 
-**Pre-merge checklist:**
-- [ ] `npm run build` → Compiled
-- [ ] No `var_dump()` en código
-- [ ] Assets compilados
-- [ ] Composer.lock actualizado si Composer.json cambió
-- [ ] Plugin/theme version bumped (si aplica)
+> **Nota:** Los proyectos PHP pueden personalizarse por framework. Consulta `.worktree-config.examples.json` para configuraciones de WordPress, Laravel, Symfony.
 
-**Directorios comunes (WordPlate):**
-- `app/themes/`
-- `app/plugins/`
-- `resources/` (Sage)
-- `config/`
+**Pre-merge checklist:**
+- [ ] `composer install` → Dependencias actualizadas
+- [ ] Tests pasan → `vendor/bin/phpunit` o comando de test del framework
+- [ ] No código de debug (`var_dump()`, `dd()`, etc.)
+- [ ] Assets compilados (si aplica)
+- [ ] `composer.lock` actualizado si `composer.json` cambió
+
+**Directorios comunes:**
+- `src/` o `app/` - Código de aplicación
+- `tests/` - Archivos de test
+- `public/` - Assets públicos
+- Directorios específicos del framework
 
 ---
 

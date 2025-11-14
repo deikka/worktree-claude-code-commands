@@ -16,7 +16,7 @@ This is the first stable release of **Git Worktrees for Claude Code**, a complet
   - Smart mode: AI generates branch names and implementation guides
   - Manual mode: Quick worktree creation without AI overhead
   - Auto-stashing of uncommitted changes
-  - Stack-specific conventions (Rails: `feat/*`, WordPress: `feature/*`)
+  - Stack-specific conventions (Rails: `feat/*`, PHP: `feat/*` - customizable per framework)
 
 - **`/worktree-list`** - View and manage active worktrees
   - Visual overview of all worktrees
@@ -53,9 +53,10 @@ This is the first stable release of **Git Worktrees for Claude Code**, a complet
   - Branch conventions: `feat/*`, `fix/*`, `refactor/*`
   - Migration detection, route conflicts, credentials validation
 
-- **WordPress** - Complete WordPress-specific checks
-  - Branch conventions: `feature/*`, `bugfix/*`, `enhancement/*`
-  - Plugin/theme structure, asset compilation, database hints
+- **PHP** - Complete PHP-specific support with framework flexibility
+  - Branch conventions: `feat/*`, `fix/*`, `refactor/*` (default, customizable)
+  - Framework-specific configurations available (WordPress, Laravel, Symfony)
+  - Dependency management, syntax validation, test structure
 
 **Built-in Support (Standard features):**
 - **Node.js / JavaScript / TypeScript** - `feat/*` conventions
@@ -289,7 +290,7 @@ Report issues: [GitHub Issues](https://github.com/yourusername/worktree-claude-c
 - Initial release with 4 slash commands
 - Smart mode with AI-assisted branch naming
 - FEATURE.md generation with implementation guides
-- Support for Rails and WordPress projects
+- Support for Rails and PHP projects (with framework-specific configurations)
 - Comprehensive English documentation
 - Complete Spanish translation
 - Installation script with validation

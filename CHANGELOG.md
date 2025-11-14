@@ -6,7 +6,42 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## [Unreleased]
 
-No unreleased changes yet.
+### 🔧 Changed
+
+#### Stack rename: WordPress → PHP
+- **Files:** `.worktree-config.json`, all documentation files
+- **Change:** Renamed `wordpress` stack to `php` for better generalizability
+- **Reason:** PHP is more generic and applicable to multiple frameworks (WordPress, Laravel, Symfony, etc.)
+- **Migration:**
+  - Base stack is now `php` with generic conventions (`feat/*`, `fix/*`, etc.)
+  - Framework-specific configurations available in `.worktree-config.examples.json`
+  - Users can customize via `.worktree-config.local.json`
+- **Backward Compatibility:** Users need to update from `wordpress`/`wp` to `php`
+- **Impact:** Better framework support and clearer naming
+
+### ✨ Added
+
+#### Feature: PHP framework example configurations
+- **File:** `.worktree-config.examples.json` (NEW)
+- **Description:** Ready-to-use configurations for popular PHP frameworks
+- **Includes:**
+  - WordPress with WordPlate (modern WordPress development)
+  - WordPress vanilla (standard installation)
+  - Laravel framework
+  - Symfony framework
+  - Generic PHP projects
+- **Usage:** Copy desired configuration to `.worktree-config.local.json`
+- **Impact:** Easy framework-specific customization without modifying main config
+
+### 📚 Improved
+
+#### Documentation: Updated all references
+- **Files:** All README, STACKS_GUIDE, START_HERE, CHEATSHEET files (English and Spanish)
+- **Changes:**
+  - Replaced WordPress/wp references with PHP
+  - Updated examples to show PHP stack usage
+  - Added tips about framework-specific configurations
+  - Updated roadmap to reflect current capabilities
 
 ---
 

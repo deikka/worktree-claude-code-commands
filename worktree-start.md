@@ -1,5 +1,5 @@
 ---
-description: Start parallel work on a feature using git worktree (Rails/WordPress)
+description: Start parallel work on a feature using git worktree (Rails/PHP/Node/Python/Go/Rust)
 allowed-tools: [bash_tool]
 ---
 
@@ -12,7 +12,7 @@ Initialize a new git worktree to work on a feature in parallel with your current
 **Debug:** `/worktree-start -v <stack> "feature description"` (verbose mode - shows all commands)
 
 **Arguments:**
-- `$1`: Project type/stack (`rails`, `wordpress`/`wp`, `node`/`js`/`ts`, `python`/`py`, `go`, `rust`, `generic`)
+- `$1`: Project type/stack (`rails`, `php`, `node`/`js`/`ts`, `python`/`py`, `go`, `rust`, `generic`)
 - `$2`: Feature description (quoted string) OR branch name (single word)
 
 ## Smart Mode vs Manual Mode
@@ -150,8 +150,8 @@ if ! command -v jq &> /dev/null; then
   echo ""
 
   # Fallback to basic validation
-  if [[ "$PROJECT_TYPE" != "rails" && "$PROJECT_TYPE" != "wordpress" && "$PROJECT_TYPE" != "wp" ]]; then
-    echo "❌ Error: Project type must be 'rails' or 'wordpress'"
+  if [[ "$PROJECT_TYPE" != "rails" && "$PROJECT_TYPE" != "php" ]]; then
+    echo "❌ Error: Project type must be 'rails' or 'php'"
     echo "💡 Install jq to use other stacks (node, python, go, rust, generic)"
     exit 1
   fi
@@ -161,7 +161,6 @@ else
 
   # Map common aliases to full stack names
   case "$PROJECT_TYPE" in
-    wp) PROJECT_TYPE="wordpress" ;;
     js|ts|javascript|typescript) PROJECT_TYPE="node" ;;
     py) PROJECT_TYPE="python" ;;
   esac
@@ -173,7 +172,7 @@ else
     echo "📋 Available stacks:"
     echo "$AVAILABLE_STACKS" | sed 's/^/  - /'
     echo ""
-    echo "💡 Aliases: wp→wordpress, js/ts→node, py→python"
+    echo "💡 Aliases: js/ts→node, py→python"
     exit 1
   fi
 fi
@@ -200,7 +199,7 @@ echo "Analyzing: '$FEATURE_DESCRIPTION'"
 echo ""
 echo "Please generate a git branch name following these rules:"
 echo "- Rails projects: feat/*, fix/*, refactor/* prefix"
-echo "- WordPress projects: feature/*, bugfix/*, enhancement/* prefix"
+echo "- PHP projects: feat/*, fix/*, refactor/* prefix (customizable per framework)"
 echo "- Lowercase, hyphens only, max 50 chars"
 echo "- Descriptive but concise"
 echo ""
@@ -212,7 +211,7 @@ echo "Respond with ONLY the branch name, nothing else."
 
 **Expected output format:**
 - Rails: `feat/jwt-authentication-refresh` or `fix/auth-token-expiry`
-- WordPress: `feature/jwt-auth-system` or `bugfix/login-validation`
+- PHP: `feat/jwt-auth-system` or `fix/login-validation`
 
 **CRITICAL:** After Claude generates the branch name, validate it programmatically:
 
@@ -338,14 +337,14 @@ For Rails projects, typically include:
 - [ ] Write tests (model, controller, integration)
 - [ ] Update documentation
 
-For WordPress projects, typically include:
-- [ ] Create/modify plugin files
-- [ ] Add database tables/fields (if needed)
-- [ ] Implement admin interfaces
-- [ ] Add frontend templates
-- [ ] Create REST API endpoints (if needed)
+For PHP projects (WordPress, Laravel, etc.), typically include:
+- [ ] Create/modify relevant files (controllers, models, views, etc.)
+- [ ] Add database migrations/tables (if needed)
+- [ ] Implement admin interfaces (if applicable)
+- [ ] Add frontend templates/views
+- [ ] Create API endpoints (if needed)
 - [ ] Write tests
-- [ ] Update plugin documentation
+- [ ] Update documentation
 
 ## 🔍 Files to Review First
 
@@ -482,20 +481,21 @@ echo "━━━━━━━━━━━━━━━━━━━━━━━━�
 - `spec/` or `test/` - Tests
 - `config/routes.rb` - Routing changes
 
-### WordPress Projects
+### PHP Projects
 
 **Prefix conventions:**
-- `feature/*` - New features
-- `bugfix/*` - Bug fixes
-- `enhancement/*` - Improvements
+- `feat/*` - New features (default)
+- `fix/*` - Bug fixes
+- `refactor/*` - Code refactoring
 - `hotfix/*` - Critical fixes
 
+**Note:** PHP projects can be customized per framework using `.worktree-config.local.json`. See `.worktree-config.examples.json` for WordPress, Laravel, Symfony configurations.
+
 **Common directories to check:**
-- `app/themes/` (WordPlate) - Theme files
-- `app/plugins/` (WordPlate) - Plugin code
-- `resources/` - Assets (if using Sage)
-- `config/` - WordPress configuration
+- `src/` or `app/` - Application code
 - `tests/` - Tests
+- `composer.json` - Dependencies
+- Framework-specific directories (themes, plugins, migrations, etc.)
 
 ## Best Practices
 
@@ -534,10 +534,10 @@ cd ../feat/two-factor-auth-sms-email
 
 ```bash
 # Start
-/worktree-start wp user-profile-redesign
-# Uses exact branch name: user-profile-redesign
+/worktree-start php user-profile-redesign
+# Uses exact branch name: feat/user-profile-redesign
 
-cd ../user-profile-redesign
+cd ../feat/user-profile-redesign
 # Start coding immediately
 
 # When done

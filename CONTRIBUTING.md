@@ -81,7 +81,7 @@ Use the feature request template when creating issues.
 3. **Test thoroughly**
    - Test all four slash commands
    - Test edge cases and error conditions
-   - Test on both Rails and WordPress projects if applicable
+   - Test on multiple stacks (Rails, PHP, Node, etc.) if applicable
 
 4. **Update documentation**
    - Update README.md if adding features
@@ -154,15 +154,18 @@ Documentation improvements are highly valuable! You can help by:
 - Adding diagrams or visual aids
 - Improving error messages
 
-### Adding Language Support
+### Adding Stack Support
 
-Currently supports Rails and WordPress. To add support for another stack:
+Currently fully supports Rails and PHP (with framework variants). To add support for another stack:
 
-1. **Study existing implementations** in command files
+1. **Study existing implementations** in `.worktree-config.json` and command files
 2. **Identify stack-specific patterns** (naming, structure, tools)
-3. **Add conditional logic** to commands
-4. **Update documentation** with new examples
-5. **Test thoroughly** with real projects
+3. **Add configuration** to `.worktree-config.json`
+4. **Add conditional logic** to commands (if needed for advanced features)
+5. **Update documentation** with new examples in STACKS_GUIDE.md
+6. **Test thoroughly** with real projects
+
+For PHP framework variants, see `.worktree-config.examples.json` for reference.
 
 ## Project Structure
 

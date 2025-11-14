@@ -183,7 +183,7 @@ git commit -m "[test] Add JWT auth tests"
 # Rails
 bin/rails test
 
-# WordPress
+# PHP
 vendor/bin/phpunit  # si está configurado
 ```
 
@@ -356,7 +356,7 @@ cd ../your-feature-branch
 
 ---
 
-## 📖 Diferencias Rails vs WordPress
+## 📖 Diferencias por Stack
 
 ### Rails Projects
 
@@ -380,27 +380,28 @@ bundle exec rubocop     # Linting OK
 - `config/routes.rb`
 - `spec/` o `test/`
 
-### WordPress Projects
+### Proyectos PHP
 
 **Naming convention:**
-- `feature/*` - Nueva funcionalidad
-- `bugfix/*` - Bug fix
-- `enhancement/*` - Mejora
+- `feat/*` - Nueva funcionalidad (default)
+- `fix/*` - Bug fix
+- `refactor/*` - Refactorización
 - `hotfix/*` - Fix crítico
+
+> **Nota:** Los proyectos PHP pueden personalizarse por framework. Consulta `.worktree-config.examples.json` para configuraciones de WordPress, Laravel, Symfony.
 
 **Antes de merge, verificar:**
 ```bash
-npm run build           # Assets compilados
 composer install        # Dependencies OK
-vendor/bin/phpunit      # Tests (si configurado)
+vendor/bin/phpunit      # Tests (o comando de test del framework)
+npm run build           # Assets compilados (si aplica)
 ```
 
 **Archivos típicos modificados:**
-- `app/themes/*` (WordPlate)
-- `app/plugins/*`
-- `resources/*` (Sage)
-- `composer.json`
-- `package.json`
+- `src/` o `app/*` - Código de aplicación
+- `tests/*` - Tests
+- `composer.json` - Dependencias
+- Directorios específicos del framework
 
 ---
 
@@ -479,7 +480,9 @@ Antes de usar worktrees por primera vez:
 **Listo?** Ejecuta:
 
 ```bash
-/worktree-start [rails|wp] "Tu descripción de feature"
+/worktree-start <stack> "Tu descripción de feature"
+# Ejemplo: /worktree-start rails "Add user authentication"
+# Ejemplo: /worktree-start php "Add contact form"
 ```
 
 ---

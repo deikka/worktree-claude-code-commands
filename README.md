@@ -54,10 +54,10 @@ Want to see it in action? Check out these example outputs:
 - **Fixed 6 additional bugs** - Improved stability and reliability
 
 ### ✨ New Features
-- **📦 Extended Stack Support** - Now supports 7 stacks (rails, wordpress, node, python, go, rust, generic)
+- **📦 Extended Stack Support** - Now supports 7 stacks (rails, php, node, python, go, rust, generic)
 - **🔍 Verbose Mode** - Use `-v` flag for detailed command execution: `/worktree-start -v rails "feature"`
 - **⚙️ Configurable Paths** - Set custom worktree locations via `.worktree-config.json`
-- **🏷️ Stack Aliases** - Use shortcuts: `wp`, `js`, `ts`, `py` instead of full names
+- **🏷️ Stack Aliases** - Use shortcuts: `js`, `ts`, `py` instead of full names
 - **📝 Local Config** - Per-developer settings with `.worktree-config.local.json`
 
 ### 🔧 Improvements
@@ -82,7 +82,7 @@ A set of **slash commands for Claude Code** that make working with git worktrees
 ✅ Visual comparison of changes before merge
 ✅ Safe merge with automatic cleanup
 ✅ Frictionless management and maintenance
-✅ Multi-stack support (Rails, WordPress, Node.js, Python, Go, Rust, and more)
+✅ Multi-stack support (Rails, PHP, Node.js, Python, Go, Rust, and more)
 ✅ Extensible configuration for custom stacks
 
 ---
@@ -227,12 +227,14 @@ bin/rails test  # Or your test command
 
 **Supported Stacks:**
 - `rails` - Ruby on Rails (fully optimized)
-- `wordpress` or `wp` - WordPress with WordPlate (fully optimized)
+- `php` - PHP projects (fully optimized - WordPress, Laravel, Symfony, etc.)
 - `node`, `js`, `ts` - Node.js / JavaScript / TypeScript
 - `python` or `py` - Python projects
 - `go` - Go projects
 - `rust` - Rust projects
 - `generic` - Any other project type
+
+> **💡 Tip:** For PHP frameworks (WordPress, Laravel, Symfony), see `.worktree-config.examples.json` for ready-to-use configurations.
 
 **Smart Mode Features:**
 - Claude analyzes your description
@@ -269,9 +271,9 @@ See **[STACKS_GUIDE.md](STACKS_GUIDE.md)** for detailed stack configuration.
 /worktree-start py "Add ML model for user recommendations"
 # → Creates: feat/ml-user-recommendations + FEATURE.md
 
-# WordPress manual mode (using alias)
-/worktree-start wp custom-widget
-# → Creates: feature/custom-widget (no FEATURE.md)
+# PHP manual mode
+/worktree-start php custom-widget
+# → Creates: feat/custom-widget (no FEATURE.md)
 
 # Generic project
 /worktree-start generic "Add documentation"
@@ -586,7 +588,7 @@ cd ../worktree-b
 bin/rails test
 bundle exec rubocop
 
-# WordPress
+# PHP
 npm run build
 vendor/bin/phpunit  # if configured
 ```
@@ -799,26 +801,28 @@ chmod +x install.sh
 
 ---
 
-### WordPress Projects
+### PHP Projects
 
 **Naming conventions:**
-- `feature/*` - New feature
-- `bugfix/*` - Bug fix
-- `enhancement/*` - Enhancement
+- `feat/*` - New feature (default)
+- `fix/*` - Bug fix
+- `refactor/*` - Refactoring
 - `hotfix/*` - Critical fix
 
-**Pre-merge checklist:**
-- [ ] `npm run build` → Compiled
-- [ ] No `var_dump()` in code
-- [ ] Assets compiled
-- [ ] Composer.lock updated if Composer.json changed
-- [ ] Plugin/theme version bumped (if applicable)
+> **Note:** PHP projects can be customized per framework. See `.worktree-config.examples.json` for WordPress, Laravel, Symfony configurations.
 
-**Common directories (WordPlate):**
-- `app/themes/`
-- `app/plugins/`
-- `resources/` (Sage)
-- `config/`
+**Pre-merge checklist:**
+- [ ] `composer install` → Dependencies updated
+- [ ] Tests pass → `vendor/bin/phpunit` or framework test command
+- [ ] No debug code (`var_dump()`, `dd()`, etc.)
+- [ ] Assets compiled (if applicable)
+- [ ] `composer.lock` updated if `composer.json` changed
+
+**Common directories:**
+- `src/` or `app/` - Application code
+- `tests/` - Test files
+- `public/` - Public assets
+- Framework-specific directories
 
 ---
 
@@ -968,14 +972,15 @@ Open an issue with:
 
 ## Roadmap
 
-### v1.1 (Next)
+### v1.2 (Next)
 
-- [ ] Support for more project types (Python, Node.js)
+- [ ] Automatic stack detection based on project files
 - [ ] Interactive mode for worktree-start
 - [ ] Visual diff tool integration
 - [ ] Better conflict resolution workflow
+- [ ] Additional framework-specific optimizations (Django, Express, FastAPI)
 
-### v1.2 (Future)
+### v1.3 (Future)
 
 - [ ] Web UI for worktree management
 - [ ] Metrics and analytics

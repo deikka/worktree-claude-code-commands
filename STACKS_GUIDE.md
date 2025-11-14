@@ -11,7 +11,7 @@ Out of the box, the system supports:
 ### Optimized Support (Full Features)
 
 - **Rails** - Ruby on Rails with full Rails-specific checks
-- **WordPress** - WordPress with WordPlate, including theme/plugin checks
+- **PHP** - PHP projects (vanilla, Laravel, Symfony, WordPress, etc.)
 
 ### Built-in Support (Standard Features)
 
@@ -20,6 +20,8 @@ Out of the box, the system supports:
 - **Go** - Go projects
 - **Rust** - Rust projects
 - **Generic** - Any other project type
+
+> **💡 Tip:** For PHP-based frameworks (WordPress, Laravel, Symfony), see `.worktree-config.examples.json` for ready-to-use configurations you can copy to your project.
 
 ---
 
@@ -38,9 +40,9 @@ Out of the box, the system supports:
 /worktree-start rails "Add user authentication"
 # Creates: feat/user-authentication
 
-# WordPress project
-/worktree-start wordpress "Add contact form"
-# Creates: feature/contact-form
+# PHP project
+/worktree-start php "Add contact form"
+# Creates: feat/contact-form
 
 # Node.js project
 /worktree-start node "Implement websocket server"
@@ -67,7 +69,6 @@ You can use short forms:
 /worktree-start js "feature"      # Same as 'node'
 /worktree-start ts "feature"      # Same as 'node'
 /worktree-start py "feature"      # Same as 'python'
-/worktree-start wp "feature"      # Same as 'wordpress'
 ```
 
 ---
@@ -94,25 +95,32 @@ You can use short forms:
 - Test requirements
 - Security considerations
 
-### WordPress (Fully Optimized)
+### PHP (Fully Optimized)
 
 **Branch conventions:**
-- Features: `feature/*`
-- Bugfixes: `bugfix/*`
-- Enhancements: `enhancement/*`
+- Features: `feat/*`
+- Bugfixes: `fix/*`
+- Refactors: `refactor/*`
 - Hotfixes: `hotfix/*`
 
 **Automatic checks:**
-- ✅ Theme/plugin structure
-- ✅ Asset compilation
-- ✅ Database changes
-- ✅ WordPress hooks validation
+- ✅ Dependency management (Composer)
+- ✅ Syntax validation
+- ✅ Test structure
+- ✅ Framework-specific checks (when configured)
 
 **FEATURE.md includes:**
-- Plugin/theme structure
-- WordPress hooks needed
-- Template files
-- Admin interface considerations
+- File structure suggestions
+- Dependencies to consider
+- Testing approach
+- Framework-specific guidelines (when configured)
+
+**Common PHP configurations available in `.worktree-config.examples.json`:**
+- WordPress with WordPlate
+- WordPress vanilla
+- Laravel
+- Symfony
+- Generic PHP
 
 ### Node.js (Standard Support)
 
@@ -196,7 +204,9 @@ You can use short forms:
 
 ---
 
-## Configuration File
+## Configuration Files
+
+### System Configuration
 
 Stack behaviors are defined in `.worktree-config.json`. This file is included with the system and defines:
 
@@ -204,6 +214,18 @@ Stack behaviors are defined in `.worktree-config.json`. This file is included wi
 - Stack-specific checks
 - File suggestions for FEATURE.md
 - Default behaviors
+
+### PHP Framework Examples
+
+The `.worktree-config.examples.json` file contains ready-to-use configurations for popular PHP frameworks and CMSs:
+
+- **WordPress with WordPlate** - Modern WordPress development
+- **WordPress Vanilla** - Standard WordPress installation
+- **Laravel** - Laravel framework projects
+- **Symfony** - Symfony framework projects
+- **Generic PHP** - Standard PHP projects
+
+To use these configurations, copy the relevant section to your project's `.worktree-config.local.json` file. See the examples file for detailed instructions.
 
 ### Example Configuration Entry
 
@@ -524,12 +546,14 @@ We welcome contributions for new stack support! See [CONTRIBUTING.md](CONTRIBUTI
 | Stack      | Aliases    | Branch Prefix | Status              |
 |------------|------------|---------------|---------------------|
 | rails      | -          | feat          | ✅ Fully Optimized  |
-| wordpress  | wp         | feature       | ✅ Fully Optimized  |
+| php        | -          | feat          | ✅ Fully Optimized  |
 | node       | js, ts     | feat          | ✅ Built-in Support |
 | python     | py         | feat          | ✅ Built-in Support |
 | go         | golang     | feat          | ✅ Built-in Support |
 | rust       | rs         | feat          | ✅ Built-in Support |
 | generic    | -          | feat          | ✅ Basic Support    |
+
+> **Note:** PHP stack can be customized for specific frameworks (WordPress, Laravel, Symfony) using configurations from `.worktree-config.examples.json`
 
 ### Configuration Priority
 

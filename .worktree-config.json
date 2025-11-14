@@ -24,25 +24,25 @@
         "db/migrate/*.rb"
       ]
     },
-    "wordpress": {
-      "name": "WordPress (WordPlate)",
-      "branch_prefix": "feature",
+    "php": {
+      "name": "PHP",
+      "branch_prefix": "feat",
       "branch_patterns": {
-        "feature": "feature",
-        "bugfix": "bugfix",
-        "enhancement": "enhancement",
+        "feature": "feat",
+        "bugfix": "fix",
+        "refactor": "refactor",
         "hotfix": "hotfix"
       },
       "checks": [
-        "themes",
-        "plugins",
-        "assets",
-        "database"
+        "dependencies",
+        "tests",
+        "syntax"
       ],
       "suggested_files": [
-        "public/themes/**/*.php",
-        "public/plugins/**/*.php",
-        "resources/**/*"
+        "src/**/*.php",
+        "app/**/*.php",
+        "tests/**/*.php",
+        "composer.json"
       ]
     },
     "node": {

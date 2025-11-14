@@ -53,7 +53,7 @@ cd ../feat/two-factor-auth-sms-email
 
 # 4️⃣ TESTEAR - Validar que funciona
 bin/rails test              # Rails
-vendor/bin/phpunit          # WordPress
+vendor/bin/phpunit          # PHP
 
 # 5️⃣ MERGE - Integrar y limpiar
 /worktree-merge main
@@ -189,14 +189,16 @@ cd ../feat/feature-b
 | `test/` | Tests | `test/auth-integration` |
 | `chore/` | Maintenance | `chore/update-deps` |
 
-### WordPress Projects
+### Proyectos PHP
 
 | Prefix | Uso | Ejemplo |
 |--------|-----|---------|
-| `feature/` | Nueva feature | `feature/custom-widget` |
-| `bugfix/` | Bug fix | `bugfix/payment-flow` |
-| `enhancement/` | Mejora | `enhancement/admin-ui` |
+| `feat/` | Nueva feature | `feat/custom-widget` |
+| `fix/` | Bug fix | `fix/payment-flow` |
+| `refactor/` | Refactorización | `refactor/auth-system` |
 | `hotfix/` | Critical fix | `hotfix/security-patch` |
+
+> **Nota:** Los prefijos pueden personalizarse por framework. Ver `.worktree-config.examples.json`
 
 ---
 
@@ -213,12 +215,12 @@ Antes de hacer `/worktree-merge`, verifica:
 - [ ] Routes OK
 - [ ] No credenciales hardcoded
 
-### WordPress
-- [ ] `npm run build` → ✅ Compiled
+### PHP
+- [ ] `composer install` → ✅ Dependencies OK
+- [ ] `vendor/bin/phpunit` → ✅ Tests pasan (o comando del framework)
 - [ ] No `var_dump()` o `dd()` en código
-- [ ] Assets compilados en `public/`
-- [ ] Composer dependencies OK
-- [ ] Plugin/theme version bumped (si aplica)
+- [ ] Assets compilados (si aplica)
+- [ ] `composer.lock` actualizado
 - [ ] No API keys en código
 
 ---

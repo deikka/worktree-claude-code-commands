@@ -1,0 +1,176 @@
+{
+  "description": "Example configurations for various PHP project types. Copy the configuration you need to .worktree-config.local.json in your project root.",
+
+  "examples": {
+    "wordpress-wordplate": {
+      "description": "WordPress with WordPlate (modern WordPress boilerplate)",
+      "config": {
+        "stacks": {
+          "php": {
+            "name": "WordPress (WordPlate)",
+            "branch_prefix": "feature",
+            "branch_patterns": {
+              "feature": "feature",
+              "bugfix": "bugfix",
+              "enhancement": "enhancement",
+              "hotfix": "hotfix"
+            },
+            "checks": [
+              "themes",
+              "plugins",
+              "assets",
+              "database"
+            ],
+            "suggested_files": [
+              "public/themes/**/*.php",
+              "public/plugins/**/*.php",
+              "resources/**/*",
+              "composer.json"
+            ]
+          }
+        }
+      }
+    },
+
+    "wordpress-vanilla": {
+      "description": "Standard WordPress installation",
+      "config": {
+        "stacks": {
+          "php": {
+            "name": "WordPress",
+            "branch_prefix": "feature",
+            "branch_patterns": {
+              "feature": "feature",
+              "bugfix": "bugfix",
+              "hotfix": "hotfix"
+            },
+            "checks": [
+              "themes",
+              "plugins",
+              "database"
+            ],
+            "suggested_files": [
+              "wp-content/themes/**/*.php",
+              "wp-content/plugins/**/*.php",
+              "wp-config.php"
+            ]
+          }
+        }
+      }
+    },
+
+    "laravel": {
+      "description": "Laravel framework projects",
+      "config": {
+        "stacks": {
+          "php": {
+            "name": "Laravel",
+            "branch_prefix": "feat",
+            "branch_patterns": {
+              "feature": "feat",
+              "bugfix": "fix",
+              "refactor": "refactor",
+              "hotfix": "hotfix"
+            },
+            "checks": [
+              "migrations",
+              "routes",
+              "tests",
+              "dependencies"
+            ],
+            "suggested_files": [
+              "app/**/*.php",
+              "routes/*.php",
+              "database/migrations/*.php",
+              "tests/**/*.php",
+              "composer.json"
+            ]
+          }
+        }
+      }
+    },
+
+    "symfony": {
+      "description": "Symfony framework projects",
+      "config": {
+        "stacks": {
+          "php": {
+            "name": "Symfony",
+            "branch_prefix": "feat",
+            "branch_patterns": {
+              "feature": "feat",
+              "bugfix": "fix",
+              "refactor": "refactor",
+              "hotfix": "hotfix"
+            },
+            "checks": [
+              "dependencies",
+              "tests",
+              "services"
+            ],
+            "suggested_files": [
+              "src/**/*.php",
+              "config/**/*.yaml",
+              "tests/**/*.php",
+              "composer.json"
+            ]
+          }
+        }
+      }
+    },
+
+    "php-generic": {
+      "description": "Generic PHP project (default configuration)",
+      "config": {
+        "stacks": {
+          "php": {
+            "name": "PHP",
+            "branch_prefix": "feat",
+            "branch_patterns": {
+              "feature": "feat",
+              "bugfix": "fix",
+              "refactor": "refactor",
+              "hotfix": "hotfix"
+            },
+            "checks": [
+              "dependencies",
+              "tests",
+              "syntax"
+            ],
+            "suggested_files": [
+              "src/**/*.php",
+              "tests/**/*.php",
+              "composer.json"
+            ]
+          }
+        }
+      }
+    }
+  },
+
+  "usage": {
+    "description": "How to use these examples",
+    "steps": [
+      "1. Choose the configuration that matches your project type",
+      "2. Create .worktree-config.local.json in your project root",
+      "3. Copy the 'config' object from the example you chose",
+      "4. Paste it into your .worktree-config.local.json",
+      "5. Customize as needed for your specific project"
+    ],
+    "example_file": ".worktree-config.local.json",
+    "example_content": {
+      "stacks": {
+        "php": {
+          "name": "WordPress (WordPlate)",
+          "branch_prefix": "feature"
+        }
+      }
+    }
+  },
+
+  "tips": {
+    "mixing_stacks": "You can override settings for multiple stacks in the same .worktree-config.local.json file",
+    "partial_override": "You only need to include the settings you want to change - other settings will use defaults",
+    "project_specific": ".worktree-config.local.json is gitignored, so it's safe for project-specific customizations"
+  }
+}
