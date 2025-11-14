@@ -37,9 +37,7 @@ jobs:
       - name: Test install.sh execution
         run: |
           cd /tmp/worktree-test-repo
-          bash ${{ github.workspace }}/install.sh << 'EOF'
-          y
-          EOF
+          bash ${{ github.workspace }}/install.sh --yes
 
       - name: Verify installation
         run: |

@@ -5,6 +5,31 @@
 
 set -e  # Exit on error
 
+# Parse command line arguments
+YES_MODE=false
+for arg in "$@"; do
+    case $arg in
+        -y|--yes)
+            YES_MODE=true
+            shift
+            ;;
+        -h|--help)
+            echo "Usage: $0 [OPTIONS]"
+            echo ""
+            echo "Options:"
+            echo "  -y, --yes    Non-interactive mode (auto-approve all prompts)"
+            echo "  -h, --help   Show this help message"
+            echo ""
+            exit 0
+            ;;
+        *)
+            echo "Unknown option: $arg"
+            echo "Use --help for usage information"
+            exit 1
+            ;;
+    esac
+done
+
 # Colors for output
 RED='\033[0;31m'
 GREEN='\033[0;32m'
@@ -101,8 +126,13 @@ for cmd in "${COMMANDS[@]}"; do
         # Check if file already exists
         if [ -f "$DST_FILE" ]; then
             print_warning "$cmd already exists"
-            read -p "  Overwrite? (y/n) " -n 1 -r
-            echo
+            if [ "$YES_MODE" = true ]; then
+                REPLY="y"
+                echo "  Auto-approving overwrite (--yes mode)"
+            else
+                read -p "  Overwrite? (y/n) " -n 1 -r
+                echo
+            fi
             if [[ ! $REPLY =~ ^[Yy]$ ]]; then
                 print_info "  Skipped $cmd"
                 continue
@@ -148,8 +178,13 @@ if [ -f "$GITIGNORE_FILE" ]; then
     fi
 else
     print_warning ".gitignore not found"
-    read -p "Create .gitignore with .claude/ entry? (y/n) " -n 1 -r
-    echo
+    if [ "$YES_MODE" = true ]; then
+        REPLY="y"
+        echo "Auto-creating .gitignore (--yes mode)"
+    else
+        read -p "Create .gitignore with .claude/ entry? (y/n) " -n 1 -r
+        echo
+    fi
     if [[ $REPLY =~ ^[Yy]$ ]]; then
         echo "# Claude Code custom commands" > "$GITIGNORE_FILE"
         echo ".claude/" >> "$GITIGNORE_FILE"
