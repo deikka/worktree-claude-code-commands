@@ -50,6 +50,12 @@ Want to see it in action? Check out these example outputs:
 **Latest Release:** November 14, 2025
 
 ### ✨ New Features
+- **🎯 Interactive Mode** - Perfect for beginners! Run `/worktree-start -i "feature"`
+  - Guided experience with visual prompts
+  - Choose change type (feature/bugfix/hotfix/refactor)
+  - Preview and edit branch name before creation
+  - Confirm all steps with visual summary
+  - Arrow key navigation and intuitive UX
 - **🤖 Automatic Stack Detection** - No need to specify stack! Just run `/worktree-start "feature description"`
   - Detects Rails, PHP, Node.js, Python, Go, Rust automatically based on project files
   - Smart priority system for ambiguous projects
@@ -256,7 +262,8 @@ See **[STACKS_GUIDE.md](STACKS_GUIDE.md)** for detailed stack configuration.
 
 **Syntax:**
 ```bash
-/worktree-start "feature description"          # Auto-detection mode (NEW!)
+/worktree-start -i "feature description"       # Interactive mode (NEW! - best for beginners)
+/worktree-start "feature description"          # Auto-detection mode (fast)
 /worktree-start <stack> "feature description"  # Smart mode with manual stack
 /worktree-start <stack> branch-name            # Manual mode
 /worktree-start -v "description"               # Auto-detection with verbose mode
@@ -264,7 +271,19 @@ See **[STACKS_GUIDE.md](STACKS_GUIDE.md)** for detailed stack configuration.
 
 **Examples:**
 ```bash
-# Auto-detection mode (recommended!)
+# Interactive mode (guided experience - NEW!)
+/worktree-start -i "Add OAuth2 authentication with Google and GitHub"
+# 🎯 Interactive mode enabled
+# 🔍 Detecting project stack...
+# ✅ Detected stack: Ruby on Rails (rails)
+#
+# [Interactive prompts:]
+# - Select change type (feature/bugfix/hotfix/refactor)
+# - Preview and edit generated branch name
+# - Confirm before creating worktree
+# → Creates: feat/oauth2-auth-google-github + FEATURE.md
+
+# Auto-detection mode (fastest!)
 /worktree-start "Add OAuth2 authentication with Google and GitHub"
 # 🔍 Detecting project stack...
 # ✅ Detected stack: Ruby on Rails (rails)
@@ -274,7 +293,7 @@ See **[STACKS_GUIDE.md](STACKS_GUIDE.md)** for detailed stack configuration.
 /worktree-start node "Implement websocket server with Redis pub/sub"
 # → Creates: feat/websocket-redis-pubsub + FEATURE.md
 
-# Auto-detection with verbose mode
+# Verbose mode (debugging)
 /worktree-start -v "Add ML model for user recommendations"
 # 🔍 Detecting project stack...
 # [DEBUG] Checking stack: python

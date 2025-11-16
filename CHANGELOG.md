@@ -12,6 +12,28 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ### ✨ Added
 
+#### Feature: Interactive Mode
+- **File:** `lib/interactive-prompt.sh` (NEW)
+- **Description:** Guided interactive mode for worktree creation with visual prompts
+- **Features:**
+  - Arrow key navigation for menu selection
+  - Visual change type picker (feature/bugfix/hotfix/refactor/docs/test/chore)
+  - Branch name preview and editing
+  - Final confirmation with summary
+  - Color-coded output with boxes and icons
+- **Usage:**
+  ```bash
+  /worktree-start -i "Add authentication feature"
+  ```
+- **Interactive Components:**
+  - `select_option()` - Arrow key menu with visual cursor
+  - `confirm()` - Yes/No prompts with defaults
+  - `prompt_input()` - Text input with defaults
+  - `multi_select()` - Checkbox-style multi-selection
+  - `box()` - Decorative boxes for headings
+  - `info/success/warn/error()` - Colored status messages
+- **Impact:** Perfect for beginners, reduces errors, teaches the system
+
 #### Feature: Automatic Stack Detection
 - **File:** `lib/detect-stack.sh` (NEW)
 - **Description:** Automatically detects project stack based on files present in repository
@@ -46,27 +68,41 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
   - Each pattern can be `required: true/false`
 - **Impact:** Customizable detection behavior per stack
 
-#### Integration: Auto-detection in worktree-start
-- **File:** `worktree-start.md:146-283`
+#### Integration: Interactive and Auto-detection in worktree-start
+- **File:** `worktree-start.md`
 - **Changes:**
+  - Added `-i` / `--interactive` flag support
   - Stack parameter is now optional
   - Detects if first argument is stack name or feature description
   - Calls `lib/detect-stack.sh` when needed
+  - Interactive mode flow:
+    1. Load interactive prompt helpers
+    2. Select change type from available branch patterns
+    3. Generate branch name with change type context
+    4. Preview and allow editing of branch name
+    5. Show summary before creation
+    6. Confirm before creating worktree
   - Shows detection result to user
   - Graceful fallback to manual mode on detection failure
 - **Compatibility:** All existing commands continue to work
-- **Impact:** Backward compatible enhancement with better UX
+- **Impact:** Backward compatible enhancement with better UX and learning curve
 
 ### 📚 Improved
 
-#### Documentation: Auto-detection examples
+#### Documentation: Interactive mode and auto-detection examples
 - **Files:** `README.md`, `worktree-start.md`
 - **Changes:**
   - Updated "What's New" section with v1.2.0 features
+  - Added interactive mode examples with full workflow
   - Added auto-detection examples to Quick Start
   - Updated command syntax documentation
-  - Added visual detection output examples
-- **Impact:** Clear documentation of new feature
+  - Added visual detection and interactive output examples
+  - Created comprehensive "Example Workflows" section showing:
+    - Interactive mode (best for beginners)
+    - Auto-detection mode (best for speed)
+    - Smart mode (manual stack control)
+    - Manual mode (direct branch naming)
+- **Impact:** Clear documentation of new features with visual examples
 
 ---
 
