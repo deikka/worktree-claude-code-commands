@@ -45,26 +45,36 @@ Want to see it in action? Check out these example outputs:
 
 ---
 
-## 🎉 What's New in v1.1.0
+## 🎉 What's New in v1.2.0
 
-**Latest Release:** January 14, 2025
-
-### 🐛 Critical Bug Fixes
-- **Fixed FEATURE.md generation** - Variables now properly expand in smart mode
-- **Fixed 6 additional bugs** - Improved stability and reliability
+**Latest Release:** November 14, 2025
 
 ### ✨ New Features
-- **📦 Extended Stack Support** - Now supports 7 stacks (rails, php, node, python, go, rust, generic)
-- **🔍 Verbose Mode** - Use `-v` flag for detailed command execution: `/worktree-start -v rails "feature"`
-- **⚙️ Configurable Paths** - Set custom worktree locations via `.worktree-config.json`
-- **🏷️ Stack Aliases** - Use shortcuts: `js`, `ts`, `py` instead of full names
-- **📝 Local Config** - Per-developer settings with `.worktree-config.local.json`
+- **🖼️ Visual Diff Integration** - Compare changes with your favorite visual diff tool!
+  - Auto-detects installed tools (VS Code, Meld, KDiff3, FileMerge, Beyond Compare, etc.)
+  - Interactive file selection for focused review
+  - One command to launch visual comparisons
+  - Saves your tool preference for future use
+  - Usage: `/worktree-compare -v main` (all files) or `-i main` (select files)
+- **🎯 Interactive Mode** - Perfect for beginners! Run `/worktree-start -i "feature"`
+  - Guided experience with visual prompts
+  - Choose change type (feature/bugfix/hotfix/refactor)
+  - Preview and edit branch name before creation
+  - Confirm all steps with visual summary
+  - Arrow key navigation and intuitive UX
+- **🤖 Automatic Stack Detection** - No need to specify stack! Just run `/worktree-start "feature description"`
+  - Detects Rails, PHP, Node.js, Python, Go, Rust automatically based on project files
+  - Smart priority system for ambiguous projects
+  - Falls back to generic for unknown projects
+  - Manual override still available when needed
 
-### 🔧 Improvements
-- Comprehensive prerequisite validation (git version, jq availability)
-- Better error messages with installation instructions
-- Enhanced branch name validation
-- Improved REPO_ROOT calculation in merge operations
+### Previous v1.1.0 Highlights
+- **📦 Extended Stack Support** - 7 stacks (rails, php, node, python, go, rust, generic)
+- **🔍 Verbose Mode** - Use `-v` flag for detailed command execution
+- **⚙️ Configurable Paths** - Set custom worktree locations
+- **🏷️ Stack Aliases** - Use shortcuts: `js`, `ts`, `py`
+- **📝 Local Config** - Per-developer settings
+- **🐛 Critical Bug Fixes** - FEATURE.md generation and 6 other fixes
 
 **[View Complete Changelog →](CHANGELOG.md)**
 
@@ -196,11 +206,11 @@ chmod +x install.sh
 ### 5 Minutes to Your First Worktree
 
 ```bash
-# 1. Create worktree (smart mode) - works with any stack!
-/worktree-start rails "Add JWT authentication with refresh tokens"
-# or: /worktree-start node "Add websocket server"
-# or: /worktree-start python "Implement ML model"
-# or: /worktree-start generic "Add new feature"
+# 1. Create worktree with AUTO-DETECTION (NEW!)
+/worktree-start "Add JWT authentication with refresh tokens"
+# 🔍 Detecting project stack...
+# ✅ Detected stack: Ruby on Rails (rails)
+# → Creates: feat/jwt-auth-refresh-tokens + FEATURE.md
 
 # 2. Navigate and work
 cd ../feat/jwt-auth-refresh-tokens
@@ -219,8 +229,14 @@ bin/rails test  # Or your test command
 # Feature complete! 🎉
 ```
 
-### Most Common Command (80% usage)
+### Most Common Commands
 
+**Auto-detection (Recommended):**
+```bash
+/worktree-start "Your feature description"
+```
+
+**Manual stack (when needed):**
 ```bash
 /worktree-start <stack> "Your feature description"
 ```
@@ -252,23 +268,42 @@ See **[STACKS_GUIDE.md](STACKS_GUIDE.md)** for detailed stack configuration.
 
 **Syntax:**
 ```bash
-/worktree-start <stack> "feature description"  # Smart mode (recommended)
+/worktree-start -i "feature description"       # Interactive mode (NEW! - best for beginners)
+/worktree-start "feature description"          # Auto-detection mode (fast)
+/worktree-start <stack> "feature description"  # Smart mode with manual stack
 /worktree-start <stack> branch-name            # Manual mode
-/worktree-start -v <stack> "description"       # Verbose mode (shows all commands)
+/worktree-start -v "description"               # Auto-detection with verbose mode
 ```
 
 **Examples:**
 ```bash
-# Rails smart mode
-/worktree-start rails "Add OAuth2 authentication with Google and GitHub"
+# Interactive mode (guided experience - NEW!)
+/worktree-start -i "Add OAuth2 authentication with Google and GitHub"
+# 🎯 Interactive mode enabled
+# 🔍 Detecting project stack...
+# ✅ Detected stack: Ruby on Rails (rails)
+#
+# [Interactive prompts:]
+# - Select change type (feature/bugfix/hotfix/refactor)
+# - Preview and edit generated branch name
+# - Confirm before creating worktree
 # → Creates: feat/oauth2-auth-google-github + FEATURE.md
 
-# Node.js smart mode with verbose output
-/worktree-start -v node "Implement websocket server with Redis pub/sub"
-# → Creates: feat/websocket-redis-pubsub + FEATURE.md (shows all bash commands)
+# Auto-detection mode (fastest!)
+/worktree-start "Add OAuth2 authentication with Google and GitHub"
+# 🔍 Detecting project stack...
+# ✅ Detected stack: Ruby on Rails (rails)
+# → Creates: feat/oauth2-auth-google-github + FEATURE.md
 
-# Python smart mode (using alias)
-/worktree-start py "Add ML model for user recommendations"
+# Manual stack (when you need control)
+/worktree-start node "Implement websocket server with Redis pub/sub"
+# → Creates: feat/websocket-redis-pubsub + FEATURE.md
+
+# Verbose mode (debugging)
+/worktree-start -v "Add ML model for user recommendations"
+# 🔍 Detecting project stack...
+# [DEBUG] Checking stack: python
+# ✅ Detected stack: Python (python)
 # → Creates: feat/ml-user-recommendations + FEATURE.md
 
 # PHP manual mode
@@ -295,16 +330,27 @@ See **[STACKS_GUIDE.md](STACKS_GUIDE.md)** for detailed stack configuration.
 
 **Syntax:**
 ```bash
-/worktree-compare [target-branch]  # Default: main/master auto-detect
+/worktree-compare [options] [target-branch]  # Default: main/master auto-detect
 ```
+
+**Options:**
+- `-v` or `--visual`: Launch visual diff tool automatically (NEW!)
+- `-i` or `--interactive`: Interactive file selection for visual diff (NEW!)
 
 **Examples:**
 ```bash
-# Compare with main
-/worktree-compare
+# Standard comparison (terminal)
+/worktree-compare main
 
-# Compare with develop
-/worktree-compare develop
+# Visual comparison (all files - NEW!)
+/worktree-compare -v main
+# Auto-detects and launches: VS Code, Meld, KDiff3, FileMerge, etc.
+
+# Interactive visual comparison (select specific files - NEW!)
+/worktree-compare -i main
+# ☑️ app/models/user.rb
+# ☐ app/controllers/users_controller.rb
+# ☑️ config/routes.rb
 ```
 
 **What it shows:**
@@ -312,6 +358,16 @@ See **[STACKS_GUIDE.md](STACKS_GUIDE.md)** for detailed stack configuration.
 - 📝 Commit list
 - ⚠️ Detection of potential conflicts
 - 📋 Full diff for review
+- 🖼️ (NEW!) Visual diff with your preferred tool
+
+**Supported Visual Diff Tools:**
+- VS Code (`code --diff`)
+- Meld
+- KDiff3
+- FileMerge / opendiff (macOS)
+- Beyond Compare
+- Diffuse, Kompare, Vimdiff
+- Git's configured difftool
 
 **[Complete documentation →](./worktree-compare.md)**
 

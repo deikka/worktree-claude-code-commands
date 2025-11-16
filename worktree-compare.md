@@ -7,10 +7,14 @@ allowed-tools: [bash_tool]
 
 Visualize all changes in the current worktree compared to a target branch (usually main/master).
 
-**Usage:** `/worktree-compare [target-branch]`
+**Usage:** `/worktree-compare [options] [target-branch]`
+
+**Options:**
+- `-v` or `--visual`: Launch visual diff tool automatically after comparison
+- `-i` or `--interactive`: Interactive file selection for visual diff
 
 **Arguments:**
-- `$1`: Target branch to compare against (default: auto-detect main/master)
+- `target-branch`: Target branch to compare against (default: auto-detect main/master)
 
 ## What This Shows You
 
@@ -23,7 +27,34 @@ Visualize all changes in the current worktree compared to a target branch (usual
 
 ## Process
 
-### 1. Detect Current Context
+### 1. Parse Flags and Options
+
+```bash
+# Parse visual diff flags
+VISUAL_DIFF=false
+INTERACTIVE_DIFF=false
+FILTERED_ARGS=()
+
+for arg in "$@"; do
+  case "$arg" in
+    -v|--visual)
+      VISUAL_DIFF=true
+      ;;
+    -i|--interactive)
+      INTERACTIVE_DIFF=true
+      VISUAL_DIFF=true  # Interactive implies visual
+      ;;
+    *)
+      FILTERED_ARGS+=("$arg")
+      ;;
+  esac
+done
+
+# Reset positional parameters
+set -- "${FILTERED_ARGS[@]}"
+```
+
+### 2. Detect Current Context
 
 ```bash
 # Verify we're in a worktree
@@ -157,7 +188,113 @@ else
 fi
 ```
 
-### 8. Interactive Options
+### 8. Visual Diff Integration (NEW!)
+
+```bash
+# Load visual diff helper if available
+if [ "$VISUAL_DIFF" = true ] || [ "$INTERACTIVE_DIFF" = true ]; then
+  if [ ! -f "lib/visual-diff.sh" ]; then
+    echo ""
+    echo "⚠️  Visual diff requested but lib/visual-diff.sh not found"
+    echo "💡 Run without -v/-i flag or install visual diff support"
+  else
+    echo ""
+    echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+    echo "🖼️  VISUAL DIFF"
+    echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+    echo ""
+
+    source lib/visual-diff.sh
+
+    # Get list of changed files
+    CHANGED_FILES=$(git diff --name-only "$TARGET_BRANCH..$CURRENT_BRANCH")
+
+    if [ -z "$CHANGED_FILES" ]; then
+      echo "ℹ️  No changed files to compare visually"
+    else
+      if [ "$INTERACTIVE_DIFF" = true ]; then
+        # Interactive file selection
+        if [ -f "lib/interactive-prompt.sh" ]; then
+          source lib/interactive-prompt.sh
+
+          # Build file list for multi-select
+          FILE_ARRAY=()
+          while IFS= read -r file; do
+            FILE_ARRAY+=("$file")
+          done <<< "$CHANGED_FILES"
+
+          echo "Select files to compare visually (Space to select, Enter to confirm):"
+          echo ""
+
+          SELECTED_INDICES=$(multi_select "Select files for visual diff:" "${FILE_ARRAY[@]}")
+
+          if [ -n "$SELECTED_INDICES" ]; then
+            # Launch diff tool for each selected file
+            for index in $SELECTED_INDICES; do
+              file="${FILE_ARRAY[$index]}"
+
+              echo ""
+              info "Opening visual diff for: $file"
+
+              # Create temp files for comparison
+              TEMP_DIR=$(mktemp -d)
+              TARGET_FILE="$TEMP_DIR/${file##*/}.target"
+              CURRENT_FILE="$TEMP_DIR/${file##*/}.current"
+
+              # Extract files from both branches
+              git show "$TARGET_BRANCH:$file" > "$TARGET_FILE" 2>/dev/null || touch "$TARGET_FILE"
+              cp "$file" "$CURRENT_FILE" 2>/dev/null || touch "$CURRENT_FILE"
+
+              # Launch diff tool
+              compare_files "$TARGET_FILE" "$CURRENT_FILE" "$TARGET_BRANCH:$file" "$CURRENT_BRANCH:$file"
+
+              # Cleanup
+              rm -rf "$TEMP_DIR"
+            done
+
+            success "Visual diff complete"
+          else
+            warn "No files selected for visual diff"
+          fi
+        else
+          warn "Interactive mode requires lib/interactive-prompt.sh"
+          echo "💡 Falling back to all files comparison"
+          INTERACTIVE_DIFF=false
+        fi
+      fi
+
+      if [ "$VISUAL_DIFF" = true ] && [ "$INTERACTIVE_DIFF" = false ]; then
+        # Non-interactive: Show all files in visual diff tool
+        echo "ℹ️  Launching visual diff tool for all changed files..."
+        echo "   (${CHANGED_FILES} files total)"
+        echo ""
+
+        # Use git difftool to compare all files
+        if ! git difftool --dir-diff "$TARGET_BRANCH..$CURRENT_BRANCH" 2>/dev/null; then
+          warn "git difftool failed, trying individual files..."
+
+          while IFS= read -r file; do
+            info "Comparing: $file"
+
+            TEMP_DIR=$(mktemp -d)
+            TARGET_FILE="$TEMP_DIR/${file##*/}.target"
+            CURRENT_FILE="$TEMP_DIR/${file##*/}.current"
+
+            git show "$TARGET_BRANCH:$file" > "$TARGET_FILE" 2>/dev/null || touch "$TARGET_FILE"
+            cp "$file" "$CURRENT_FILE" 2>/dev/null || touch "$CURRENT_FILE"
+
+            compare_files "$TARGET_FILE" "$CURRENT_FILE" "$TARGET_BRANCH:$file" "$CURRENT_BRANCH:$file"
+
+            rm -rf "$TEMP_DIR"
+          done <<< "$CHANGED_FILES"
+        fi
+      fi
+    fi
+  fi
+fi
+```
+
+### 9. Interactive Options
 
 ```bash
 echo ""
@@ -176,10 +313,14 @@ echo ""
 echo "3. 📊 Re-compare later:"
 echo "   /worktree-compare $TARGET_BRANCH"
 echo ""
-echo "4. 🔍 View specific file changes:"
+echo "4. 🖼️  Visual diff (NEW!):"
+echo "   /worktree-compare -v $TARGET_BRANCH  # All files"
+echo "   /worktree-compare -i $TARGET_BRANCH  # Interactive selection"
+echo ""
+echo "5. 🔍 View specific file changes:"
 echo "   git diff $TARGET_BRANCH -- path/to/file"
 echo ""
-echo "5. 🧪 Test merge without committing:"
+echo "6. 🧪 Test merge without committing:"
 echo "   git merge --no-commit --no-ff $TARGET_BRANCH"
 echo "   (then git merge --abort to undo)"
 echo ""

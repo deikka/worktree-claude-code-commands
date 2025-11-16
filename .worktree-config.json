@@ -4,6 +4,24 @@
     "rails": {
       "name": "Ruby on Rails",
       "branch_prefix": "feat",
+      "detection_patterns": [
+        {
+          "type": "file",
+          "path": "Gemfile",
+          "required": true
+        },
+        {
+          "type": "file",
+          "path": "config/application.rb",
+          "required": false
+        },
+        {
+          "type": "directory",
+          "path": "app/models",
+          "required": false
+        }
+      ],
+      "detection_priority": 90,
       "branch_patterns": {
         "feature": "feat",
         "bugfix": "fix",
@@ -27,6 +45,30 @@
     "php": {
       "name": "PHP",
       "branch_prefix": "feat",
+      "detection_patterns": [
+        {
+          "type": "file",
+          "path": "composer.json",
+          "required": true
+        },
+        {
+          "type": "file",
+          "path": "index.php",
+          "required": false
+        },
+        {
+          "type": "directory",
+          "path": "src",
+          "required": false
+        },
+        {
+          "type": "directory",
+          "path": "public/themes",
+          "required": false,
+          "comment": "WordPress indicator"
+        }
+      ],
+      "detection_priority": 70,
       "branch_patterns": {
         "feature": "feat",
         "bugfix": "fix",
@@ -48,6 +90,24 @@
     "node": {
       "name": "Node.js / JavaScript",
       "branch_prefix": "feat",
+      "detection_patterns": [
+        {
+          "type": "file",
+          "path": "package.json",
+          "required": true
+        },
+        {
+          "type": "directory",
+          "path": "node_modules",
+          "required": false
+        },
+        {
+          "type": "file",
+          "path": "tsconfig.json",
+          "required": false
+        }
+      ],
+      "detection_priority": 80,
       "branch_patterns": {
         "feature": "feat",
         "bugfix": "fix",
@@ -69,6 +129,30 @@
     "python": {
       "name": "Python",
       "branch_prefix": "feat",
+      "detection_patterns": [
+        {
+          "type": "file",
+          "path": "requirements.txt",
+          "required": false
+        },
+        {
+          "type": "file",
+          "path": "setup.py",
+          "required": false
+        },
+        {
+          "type": "file",
+          "path": "pyproject.toml",
+          "required": false
+        },
+        {
+          "type": "file",
+          "path": "Pipfile",
+          "required": false
+        }
+      ],
+      "detection_priority": 75,
+      "detection_note": "Requires at least one of: requirements.txt, setup.py, pyproject.toml, or Pipfile",
       "branch_patterns": {
         "feature": "feat",
         "bugfix": "fix",
@@ -90,6 +174,19 @@
     "go": {
       "name": "Go",
       "branch_prefix": "feat",
+      "detection_patterns": [
+        {
+          "type": "file",
+          "path": "go.mod",
+          "required": true
+        },
+        {
+          "type": "file",
+          "path": "go.sum",
+          "required": false
+        }
+      ],
+      "detection_priority": 95,
       "branch_patterns": {
         "feature": "feat",
         "bugfix": "fix",
@@ -110,6 +207,19 @@
     "rust": {
       "name": "Rust",
       "branch_prefix": "feat",
+      "detection_patterns": [
+        {
+          "type": "file",
+          "path": "Cargo.toml",
+          "required": true
+        },
+        {
+          "type": "file",
+          "path": "Cargo.lock",
+          "required": false
+        }
+      ],
+      "detection_priority": 95,
       "branch_patterns": {
         "feature": "feat",
         "bugfix": "fix",
@@ -130,6 +240,9 @@
     "generic": {
       "name": "Generic Project",
       "branch_prefix": "feat",
+      "detection_patterns": [],
+      "detection_priority": 0,
+      "detection_note": "Fallback stack when no other stack matches",
       "branch_patterns": {
         "feature": "feat",
         "bugfix": "fix",
@@ -150,7 +263,33 @@
     "max_branch_length": 50,
     "merge_strategy": "no-ff",
     "auto_push": true,
-    "auto_cleanup": true
+    "auto_cleanup": true,
+    "visual_diff_tool": "",
+    "visual_diff_enabled": true
+  },
+  "visual_diff": {
+    "supported_tools": [
+      "opendiff",
+      "vscode",
+      "meld",
+      "kdiff3",
+      "bcomp",
+      "diffuse",
+      "kompare",
+      "vimdiff",
+      "git-difftool"
+    ],
+    "tool_descriptions": {
+      "opendiff": "FileMerge (macOS, comes with Xcode)",
+      "vscode": "Visual Studio Code",
+      "meld": "Meld (cross-platform)",
+      "kdiff3": "KDiff3 (cross-platform)",
+      "bcomp": "Beyond Compare",
+      "diffuse": "Diffuse",
+      "kompare": "Kompare (KDE)",
+      "vimdiff": "Vimdiff (terminal-based)",
+      "git-difftool": "Git's configured difftool"
+    }
   },
   "custom_instructions": {
     "how_to_add_stack": "To add a custom stack, copy one of the existing stack configs and modify it to match your project needs. You can override any setting in your project's .worktree-config.local.json file."

@@ -6,6 +6,170 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## [Unreleased]
 
+---
+
+## [1.2.0] - 2025-11-14
+
+### ✨ Added
+
+#### Feature: Visual Diff Tool Integration
+- **File:** `lib/visual-diff.sh` (NEW)
+- **Description:** Integration with popular visual diff tools for better code review
+- **Supported Tools:**
+  - VS Code (`code --diff`)
+  - Meld (cross-platform)
+  - KDiff3 (cross-platform)
+  - FileMerge / opendiff (macOS with Xcode)
+  - Beyond Compare
+  - Diffuse, Kompare (Linux)
+  - Vimdiff (terminal-based fallback)
+  - Git's configured difftool
+- **Features:**
+  - Auto-detection of available tools on system
+  - Interactive tool selection with descriptions
+  - Preference saving to `.worktree-config.local.json`
+  - File-by-file comparison mode
+  - Interactive multi-select for specific files
+  - Integration with `worktree-compare` command
+- **Usage:**
+  ```bash
+  # Visual comparison (all files)
+  /worktree-compare -v main
+
+  # Interactive file selection
+  /worktree-compare -i main
+
+  # Standalone tool selection
+  bash lib/visual-diff.sh select
+  ```
+- **Configuration:**
+  - Added `visual_diff_tool` and `visual_diff_enabled` to `.worktree-config.json`
+  - Tool preference saved to local config
+  - Supports custom difftool configuration
+- **Impact:** Better code review experience with familiar visual tools
+
+#### Feature: Interactive Mode
+- **File:** `lib/interactive-prompt.sh` (NEW)
+- **Description:** Guided interactive mode for worktree creation with visual prompts
+- **Features:**
+  - Arrow key navigation for menu selection
+  - Visual change type picker (feature/bugfix/hotfix/refactor/docs/test/chore)
+  - Branch name preview and editing
+  - Final confirmation with summary
+  - Color-coded output with boxes and icons
+- **Usage:**
+  ```bash
+  /worktree-start -i "Add authentication feature"
+  ```
+- **Interactive Components:**
+  - `select_option()` - Arrow key menu with visual cursor
+  - `confirm()` - Yes/No prompts with defaults
+  - `prompt_input()` - Text input with defaults
+  - `multi_select()` - Checkbox-style multi-selection
+  - `box()` - Decorative boxes for headings
+  - `info/success/warn/error()` - Colored status messages
+- **Impact:** Perfect for beginners, reduces errors, teaches the system
+
+#### Feature: Automatic Stack Detection
+- **File:** `lib/detect-stack.sh` (NEW)
+- **Description:** Automatically detects project stack based on files present in repository
+- **Detection Patterns:**
+  - **Rails**: Gemfile + optional config/application.rb or app/models/
+  - **PHP**: composer.json + optional index.php, src/, or public/themes/
+  - **Node.js**: package.json + optional node_modules/ or tsconfig.json
+  - **Python**: One of: requirements.txt, setup.py, pyproject.toml, or Pipfile
+  - **Go**: go.mod + optional go.sum
+  - **Rust**: Cargo.toml + optional Cargo.lock
+  - **Generic**: Fallback when no stack matches
+- **Priority System:** Each stack has configurable priority (0-100) for ambiguous projects
+- **Usage:**
+  ```bash
+  # Auto-detect stack
+  /worktree-start "Add new feature"
+
+  # Manual override still available
+  /worktree-start rails "Add new feature"
+  ```
+- **Impact:** Simpler command syntax, no need to remember/specify stack type
+
+#### Configuration: Detection patterns in config
+- **File:** `.worktree-config.json`
+- **Changes:**
+  - Added `detection_patterns` array to each stack
+  - Added `detection_priority` (0-100, higher = preferred)
+  - Added optional `detection_note` for documentation
+- **Pattern Types:**
+  - `file` - Check for file existence
+  - `directory` - Check for directory existence
+  - Each pattern can be `required: true/false`
+- **Impact:** Customizable detection behavior per stack
+
+#### Integration: Visual diff in worktree-compare
+- **File:** `worktree-compare.md`
+- **Changes:**
+  - Added `-v` / `--visual` flag for automatic visual diff
+  - Added `-i` / `--interactive` flag for file selection
+  - Integration with `lib/visual-diff.sh` for tool management
+  - Multi-select interface for choosing specific files to compare
+  - Fallback to git difftool for directory-level comparison
+  - Temporary file creation for version comparison
+  - Automatic cleanup of temp files
+  - Tool preference loading and saving
+- **Visual Diff Flow:**
+  1. Parse visual diff flags
+  2. Load visual-diff.sh helper
+  3. Get list of changed files
+  4. Interactive mode: Show multi-select menu
+  5. For each selected file: Create temp files from both branches
+  6. Launch configured visual diff tool
+  7. Clean up temp files
+- **Impact:** Dramatically improved code review experience with side-by-side comparison
+
+#### Integration: Interactive and Auto-detection in worktree-start
+- **File:** `worktree-start.md`
+- **Changes:**
+  - Added `-i` / `--interactive` flag support
+  - Stack parameter is now optional
+  - Detects if first argument is stack name or feature description
+  - Calls `lib/detect-stack.sh` when needed
+  - Interactive mode flow:
+    1. Load interactive prompt helpers
+    2. Select change type from available branch patterns
+    3. Generate branch name with change type context
+    4. Preview and allow editing of branch name
+    5. Show summary before creation
+    6. Confirm before creating worktree
+  - Shows detection result to user
+  - Graceful fallback to manual mode on detection failure
+- **Compatibility:** All existing commands continue to work
+- **Impact:** Backward compatible enhancement with better UX and learning curve
+
+### 📚 Improved
+
+#### Documentation: Visual diff, interactive mode, and auto-detection
+- **Files:** `README.md`, `worktree-start.md`, `worktree-compare.md`
+- **Changes:**
+  - Updated "What's New" section with all v1.2.0 features
+  - Added visual diff integration documentation
+  - Listed supported diff tools with examples
+  - Added interactive mode examples with full workflow
+  - Added auto-detection examples to Quick Start
+  - Updated command syntax documentation for all commands
+  - Added visual detection and interactive output examples
+  - Created comprehensive "Example Workflows" section showing:
+    - Visual diff mode (interactive file selection)
+    - Interactive worktree mode (best for beginners)
+    - Auto-detection mode (best for speed)
+    - Smart mode (manual stack control)
+    - Manual mode (direct branch naming)
+  - Updated worktree-compare documentation with visual diff flags
+  - Added tool detection and preference saving examples
+- **Impact:** Clear documentation of all new features with visual examples and workflows
+
+---
+
+## [1.1.1] - 2025-01-14
+
 ### 🔧 Changed
 
 #### Stack rename: WordPress → PHP

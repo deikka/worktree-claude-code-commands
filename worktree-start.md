@@ -7,20 +7,55 @@ allowed-tools: [bash_tool]
 
 Initialize a new git worktree to work on a feature in parallel with your current work.
 
-**Usage:** `/worktree-start <stack> "feature description"` (SMART MODE - recommended)
-**Alternative:** `/worktree-start <stack> branch-name` (manual mode)
-**Debug:** `/worktree-start -v <stack> "feature description"` (verbose mode - shows all commands)
+**Usage (Auto-detection - recommended!):** `/worktree-start "feature description"` (stack auto-detected)
+**Interactive:** `/worktree-start -i "feature description"` (interactive mode - NEW!)
+**Alternative:** `/worktree-start <stack> "feature description"` (SMART MODE - manual stack)
+**Manual:** `/worktree-start <stack> branch-name` (manual mode)
+**Debug:** `/worktree-start -v "feature description"` (verbose mode - shows all commands)
 
 **Arguments:**
-- `$1`: Project type/stack (`rails`, `php`, `node`/`js`/`ts`, `python`/`py`, `go`, `rust`, `generic`)
+- `$1`: (Optional) Flags or project type/stack
+  - `-i` or `--interactive`: Enable interactive mode with prompts
+  - `-v` or `--verbose`: Enable verbose mode (shows all commands)
+  - Stack name: `rails`, `php`, `node`/`js`/`ts`, `python`/`py`, `go`, `rust`, `generic`
+  - If omitted or not a flag/stack, assumes it's a feature description
 - `$2`: Feature description (quoted string) OR branch name (single word)
+  - If `$1` is a description with spaces, stack is auto-detected
+
+## Modes Overview
+
+### Interactive Mode (NEW! - Best for beginners)
+
+**INTERACTIVE MODE:**
+```bash
+/worktree-start -i "Add JWT authentication with refresh tokens"
+```
+- **Guided experience** with interactive prompts
+- Choose change type (feature/bugfix/hotfix/refactor)
+- Select stack if auto-detection finds multiple matches
+- Preview and edit generated branch name
+- Confirm before creating worktree
+- Perfect for learning the system
+
+### Auto-Detection Mode
+
+**AUTO-DETECTION MODE (Best for speed):**
+```bash
+/worktree-start "Add JWT authentication with refresh tokens"
+```
+- **Stack is automatically detected** from project files (Gemfile, package.json, etc.)
+- Claude analyzes your description
+- Generates appropriate branch name automatically
+- Creates FEATURE.md with context and suggestions
+- Identifies relevant files to start with
 
 ## Smart Mode vs Manual Mode
 
-**SMART MODE (Recommended):**
+**SMART MODE (Manual Stack):**
 ```bash
 /worktree-start rails "Add JWT authentication with refresh tokens"
 ```
+- Manually specify the stack
 - Claude analyzes your description
 - Generates appropriate branch name automatically
 - Creates FEATURE.md with context and suggestions
@@ -45,26 +80,47 @@ Initialize a new git worktree to work on a feature in parallel with your current
 
 ## Process
 
-### 1. Parse Debug/Verbose Flags
+### 1. Parse Flags (Verbose, Interactive)
 
 ```bash
-# Support for verbose mode: /worktree-start -v rails "feature"
+# Support for verbose and interactive modes
 VERBOSE=false
+INTERACTIVE=false
 ORIGINAL_ARGS=("$@")
 
-# Check for verbose flag in any position
+# Check for flags in any position
+FILTERED_ARGS=()
 for arg in "$@"; do
-  if [[ "$arg" == "-v" || "$arg" == "--verbose" ]]; then
-    VERBOSE=true
-    # Remove verbose flag from arguments
-    set -- "${@/$arg/}"
-  fi
+  case "$arg" in
+    -v|--verbose)
+      VERBOSE=true
+      ;;
+    -i|--interactive)
+      INTERACTIVE=true
+      ;;
+    *)
+      FILTERED_ARGS+=("$arg")
+      ;;
+  esac
 done
+
+# Reset positional parameters with filtered args
+set -- "${FILTERED_ARGS[@]}"
 
 # Enable bash debugging if verbose mode
 if [ "$VERBOSE" = true ]; then
   echo "🔍 Verbose mode enabled"
   set -x  # Show all commands being executed
+fi
+
+# Load interactive prompt helpers if interactive mode
+if [ "$INTERACTIVE" = true ]; then
+  if [ ! -f "lib/interactive-prompt.sh" ]; then
+    echo "❌ Error: Interactive mode requires lib/interactive-prompt.sh"
+    exit 1
+  fi
+  source lib/interactive-prompt.sh
+  echo "🎯 Interactive mode enabled"
 fi
 ```
 
@@ -130,9 +186,6 @@ echo "✅ Running from main repository"
 ### 3. Parse Arguments and Detect Mode
 
 ```bash
-PROJECT_TYPE="$1"
-FEATURE_INPUT="$2"
-
 # Validate .worktree-config.json exists
 if [ ! -f ".worktree-config.json" ]; then
   echo "❌ Error: .worktree-config.json not found"
@@ -140,40 +193,165 @@ if [ ! -f ".worktree-config.json" ]; then
   exit 1
 fi
 
-# Check jq is available (recommended for advanced features)
+# Check jq is available (required for auto-detection)
 if ! command -v jq &> /dev/null; then
-  echo "⚠️  Warning: jq not installed, using basic validation"
-  echo "💡 For full stack support, install jq:"
+  echo "⚠️  Warning: jq not installed"
+  echo "💡 For auto-detection and full stack support, install jq:"
   echo "   macOS:  brew install jq"
   echo "   Linux:  sudo apt-get install jq  or  sudo yum install jq"
   echo "   Manual: https://stedolan.github.io/jq/download/"
   echo ""
+fi
 
-  # Fallback to basic validation
-  if [[ "$PROJECT_TYPE" != "rails" && "$PROJECT_TYPE" != "php" ]]; then
-    echo "❌ Error: Project type must be 'rails' or 'php'"
-    echo "💡 Install jq to use other stacks (node, python, go, rust, generic)"
+# Determine if first argument is a stack or a feature description
+ARG1="$1"
+ARG2="${2:-}"
+
+# Auto-detection logic:
+# - If ARG1 contains spaces → it's a description, auto-detect stack
+# - If ARG1 is a known stack → use it, ARG2 is description/branch
+# - If ARG1 is unknown → try auto-detection
+
+AUTO_DETECT=false
+PROJECT_TYPE=""
+FEATURE_INPUT=""
+
+# Check if ARG1 looks like a description (contains spaces or quotes)
+if [[ "$ARG1" =~ [[:space:]] ]]; then
+  # ARG1 is a description → auto-detect stack
+  AUTO_DETECT=true
+  FEATURE_INPUT="$ARG1"
+  echo "🔍 Auto-detection mode: No stack specified"
+else
+  # ARG1 might be a stack name or a branch name
+  # Check if it's a known stack
+  if command -v jq &> /dev/null; then
+    AVAILABLE_STACKS=$(jq -r '.stacks | keys[]' .worktree-config.json 2>/dev/null)
+
+    # Map common aliases to full stack names
+    NORMALIZED_ARG1="$ARG1"
+    case "$ARG1" in
+      js|ts|javascript|typescript) NORMALIZED_ARG1="node" ;;
+      py) NORMALIZED_ARG1="python" ;;
+    esac
+
+    # Check if it's a valid stack
+    if echo "$AVAILABLE_STACKS" | grep -q "^${NORMALIZED_ARG1}$"; then
+      # It's a valid stack
+      PROJECT_TYPE="$NORMALIZED_ARG1"
+      FEATURE_INPUT="$ARG2"
+
+      if [ -z "$FEATURE_INPUT" ]; then
+        echo "❌ Error: Missing feature description or branch name"
+        echo "💡 Usage: /worktree-start $ARG1 \"feature description\""
+        exit 1
+      fi
+    else
+      # Not a known stack → try auto-detection
+      AUTO_DETECT=true
+      FEATURE_INPUT="$ARG1"
+      echo "🔍 Auto-detection mode: '$ARG1' is not a known stack"
+    fi
+  else
+    # No jq → fallback to basic validation
+    if [[ "$ARG1" != "rails" && "$ARG1" != "php" ]]; then
+      echo "❌ Error: Project type must be 'rails' or 'php' (or install jq for auto-detection)"
+      exit 1
+    fi
+    PROJECT_TYPE="$ARG1"
+    FEATURE_INPUT="$ARG2"
+  fi
+fi
+
+# Perform auto-detection if needed
+if [ "$AUTO_DETECT" = true ]; then
+  if [ ! -f "lib/detect-stack.sh" ]; then
+    echo "❌ Error: Auto-detection script not found"
+    echo "💡 Please specify the stack manually: /worktree-start <stack> \"description\""
     exit 1
   fi
-else
-  # Get available stacks from config
-  AVAILABLE_STACKS=$(jq -r '.stacks | keys[]' .worktree-config.json 2>/dev/null)
 
-  # Map common aliases to full stack names
-  case "$PROJECT_TYPE" in
-    js|ts|javascript|typescript) PROJECT_TYPE="node" ;;
-    py) PROJECT_TYPE="python" ;;
-  esac
+  echo "🔍 Detecting project stack..."
 
-  # Validate project type against available stacks
-  if ! echo "$AVAILABLE_STACKS" | grep -q "^${PROJECT_TYPE}$"; then
-    echo "❌ Error: Unknown project type '$PROJECT_TYPE'"
+  # Source the detection script and run detection
+  export VERBOSE="$VERBOSE"
+  export WORKTREE_CONFIG_FILE=".worktree-config.json"
+
+  DETECTED_STACK=$(bash lib/detect-stack.sh 2>/dev/null)
+
+  if [ $? -ne 0 ] || [ -z "$DETECTED_STACK" ]; then
+    echo "❌ Error: Could not auto-detect project stack"
+    echo "💡 Please specify the stack manually:"
+    echo "   /worktree-start <stack> \"$FEATURE_INPUT\""
     echo ""
     echo "📋 Available stacks:"
-    echo "$AVAILABLE_STACKS" | sed 's/^/  - /'
-    echo ""
-    echo "💡 Aliases: js/ts→node, py→python"
+    if command -v jq &> /dev/null; then
+      jq -r '.stacks | keys[]' .worktree-config.json | sed 's/^/  - /'
+    else
+      echo "  - rails"
+      echo "  - php"
+    fi
     exit 1
+  fi
+
+  PROJECT_TYPE="$DETECTED_STACK"
+  STACK_NAME=$(jq -r ".stacks[\"$PROJECT_TYPE\"].name" .worktree-config.json)
+  echo "✅ Detected stack: $STACK_NAME ($PROJECT_TYPE)"
+fi
+
+# Validate we have both stack and feature input
+if [ -z "$PROJECT_TYPE" ]; then
+  echo "❌ Error: Project type not specified and auto-detection failed"
+  exit 1
+fi
+
+if [ -z "$FEATURE_INPUT" ]; then
+  echo "❌ Error: Feature description or branch name required"
+  exit 1
+fi
+
+# Interactive mode: Let user select change type
+CHANGE_TYPE=""
+if [ "$INTERACTIVE" = true ]; then
+  echo ""
+  box "🎯 Interactive Worktree Setup"
+  echo ""
+
+  # Get available branch patterns for this stack
+  if command -v jq &> /dev/null; then
+    BRANCH_PATTERNS=$(jq -r ".stacks[\"$PROJECT_TYPE\"].branch_patterns | keys[]" .worktree-config.json 2>/dev/null)
+
+    # Convert to array for menu
+    PATTERN_OPTIONS=()
+    while IFS= read -r pattern; do
+      case "$pattern" in
+        feature) PATTERN_OPTIONS+=("Feature - New functionality") ;;
+        bugfix) PATTERN_OPTIONS+=("Bugfix - Fix a bug") ;;
+        hotfix) PATTERN_OPTIONS+=("Hotfix - Critical production fix") ;;
+        refactor) PATTERN_OPTIONS+=("Refactor - Code improvement") ;;
+        docs) PATTERN_OPTIONS+=("Docs - Documentation only") ;;
+        test) PATTERN_OPTIONS+=("Test - Test additions/improvements") ;;
+        chore) PATTERN_OPTIONS+=("Chore - Maintenance tasks") ;;
+        *) PATTERN_OPTIONS+=("$pattern") ;;
+      esac
+    done <<< "$BRANCH_PATTERNS"
+
+    # Show selection menu
+    selected_index=$(select_option "What type of change is this?" "${PATTERN_OPTIONS[@]}")
+
+    # Map back to pattern name
+    PATTERN_NAMES=()
+    while IFS= read -r pattern; do
+      PATTERN_NAMES+=("$pattern")
+    done <<< "$BRANCH_PATTERNS"
+
+    CHANGE_TYPE="${PATTERN_NAMES[$selected_index]}"
+    echo ""
+    info "Change type: $CHANGE_TYPE"
+  else
+    # Fallback without jq
+    CHANGE_TYPE="feature"
+    warn "jq not available, defaulting to 'feature'"
   fi
 fi
 
@@ -205,6 +383,16 @@ echo "- Descriptive but concise"
 echo ""
 echo "Feature description: $FEATURE_DESCRIPTION"
 echo "Project type: $PROJECT_TYPE"
+
+# If interactive mode selected a specific change type, inform Claude
+if [ -n "$CHANGE_TYPE" ]; then
+  # Get the branch prefix for this change type
+  BRANCH_PREFIX=$(jq -r ".stacks[\"$PROJECT_TYPE\"].branch_patterns[\"$CHANGE_TYPE\"]" .worktree-config.json 2>/dev/null)
+  if [ "$BRANCH_PREFIX" != "null" ] && [ -n "$BRANCH_PREFIX" ]; then
+    echo "Change type: $CHANGE_TYPE (use prefix: $BRANCH_PREFIX/*)"
+  fi
+fi
+
 echo ""
 echo "Respond with ONLY the branch name, nothing else."
 ```
@@ -247,6 +435,41 @@ if [ ${#BRANCH_NAME} -lt 5 ]; then
 fi
 
 echo "✅ Generated branch name: $BRANCH_NAME"
+
+# Interactive mode: Confirm or edit branch name
+if [ "$INTERACTIVE" = true ]; then
+  echo ""
+  info "Preview: Branch will be created as '$BRANCH_NAME'"
+  echo ""
+
+  if confirm "Use this branch name?" "y"; then
+    success "Using: $BRANCH_NAME"
+  else
+    # Let user edit the branch name
+    echo ""
+    CUSTOM_BRANCH=$(prompt_input "Enter custom branch name" "$BRANCH_NAME")
+
+    # Validate custom branch name
+    if [ -z "$CUSTOM_BRANCH" ]; then
+      error "Branch name cannot be empty"
+      exit 1
+    fi
+
+    if ! [[ "$CUSTOM_BRANCH" =~ ^[a-z0-9/_-]+$ ]]; then
+      error "Invalid branch name format: $CUSTOM_BRANCH"
+      echo "💡 Branch names must be lowercase alphanumeric with /-_ only"
+      exit 1
+    fi
+
+    if [ ${#CUSTOM_BRANCH} -gt 50 ]; then
+      error "Branch name too long (${#CUSTOM_BRANCH} chars, max 50)"
+      exit 1
+    fi
+
+    BRANCH_NAME="$CUSTOM_BRANCH"
+    success "Using custom name: $BRANCH_NAME"
+  fi
+fi
 ```
 
 Store validated result in `$BRANCH_NAME`
@@ -293,6 +516,26 @@ fi
 
 # Build full worktree path
 WORKTREE_PATH="$WORKTREE_BASE/$BRANCH_NAME"
+
+# Interactive mode: Final confirmation
+if [ "$INTERACTIVE" = true ]; then
+  echo ""
+  box "📋 Summary"
+  echo ""
+  info "Stack: $PROJECT_TYPE"
+  if [ -n "$CHANGE_TYPE" ]; then
+    info "Change type: $CHANGE_TYPE"
+  fi
+  info "Branch: $BRANCH_NAME"
+  info "Location: $WORKTREE_PATH"
+  echo ""
+
+  if ! confirm "Create this worktree?" "y"; then
+    warn "Worktree creation cancelled"
+    exit 0
+  fi
+  echo ""
+fi
 
 echo "🌿 Creating new worktree at $WORKTREE_PATH"
 git worktree add -b "$BRANCH_NAME" "$WORKTREE_PATH"
@@ -513,10 +756,82 @@ echo "━━━━━━━━━━━━━━━━━━━━━━━━�
 
 ## Example Workflows
 
-### Smart Mode Example (Recommended):
+### Interactive Mode (Best for Beginners):
 
 ```bash
-# Start
+# Start - Guided interactive experience
+/worktree-start -i "Add two-factor authentication with SMS and email"
+
+# 🎯 Interactive mode enabled
+# 🔍 Detecting project stack...
+# ✅ Detected stack: Ruby on Rails (rails)
+#
+# ┌────────────────────────────────────────────────────────┐
+# │ 🎯 Interactive Worktree Setup
+# └────────────────────────────────────────────────────────┘
+#
+# What type of change is this?
+# ▶ Feature - New functionality
+#   Bugfix - Fix a bug
+#   Hotfix - Critical production fix
+#   Refactor - Code improvement
+#
+# ℹ Change type: feature
+#
+# 🤖 Smart Mode: Analyzing feature description...
+# ✅ Generated branch name: feat/two-factor-auth-sms-email
+#
+# ℹ Preview: Branch will be created as 'feat/two-factor-auth-sms-email'
+#
+# Use this branch name? [Y/n]: y
+# ✓ Using: feat/two-factor-auth-sms-email
+#
+# ┌────────────────────────────────────────────────────────┐
+# │ 📋 Summary
+# └────────────────────────────────────────────────────────┘
+#
+# ℹ Stack: rails
+# ℹ Change type: feature
+# ℹ Branch: feat/two-factor-auth-sms-email
+# ℹ Location: ../feat/two-factor-auth-sms-email
+#
+# Create this worktree? [Y/n]: y
+#
+# 🌿 Creating new worktree...
+# ✅ Worktree created successfully!
+
+cd ../feat/two-factor-auth-sms-email
+# Review FEATURE.md
+# Start coding following the generated checklist
+
+# When done
+/worktree-compare main
+/worktree-merge main
+```
+
+### Auto-Detection Mode (Best for Speed):
+
+```bash
+# Start - Stack is automatically detected!
+/worktree-start "Add two-factor authentication with SMS and email"
+# 🔍 Detecting project stack...
+# ✅ Detected stack: Ruby on Rails (rails)
+# Claude generates: feat/two-factor-auth-sms-email
+# Creates FEATURE.md with implementation guidance
+
+cd ../feat/two-factor-auth-sms-email
+# Review FEATURE.md
+# Start coding following the generated checklist
+
+# When done
+/worktree-compare main
+/worktree-merge main
+```
+
+### Smart Mode Example (Manual Stack):
+
+```bash
+# Start - Manually specify stack
 /worktree-start rails "Add two-factor authentication with SMS and email"
 # Claude generates: feat/two-factor-auth-sms-email
 # Creates FEATURE.md with implementation guidance
@@ -545,18 +860,19 @@ cd ../feat/user-profile-redesign
 /worktree-merge main
 ```
 
-### Parallel Development:
+### Parallel Development with Auto-Detection:
 
 ```bash
 # Terminal 1: Work on authentication
-/worktree-start rails "OAuth2 integration"
+/worktree-start "OAuth2 integration"
 cd ../feat/oauth2-integration
 
 # Terminal 2: Work on UI simultaneously
-/worktree-start rails "Dashboard redesign with Tailwind"
+/worktree-start "Dashboard redesign with Tailwind"
 cd ../feat/dashboard-redesign
 
 # Both can be developed, tested, and merged independently
+# Stack is auto-detected for each worktree based on project files
 ```
 
 ## What Happens Next
