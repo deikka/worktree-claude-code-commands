@@ -45,26 +45,24 @@ Want to see it in action? Check out these example outputs:
 
 ---
 
-## 🎉 What's New in v1.1.0
+## 🎉 What's New in v1.2.0
 
-**Latest Release:** January 14, 2025
-
-### 🐛 Critical Bug Fixes
-- **Fixed FEATURE.md generation** - Variables now properly expand in smart mode
-- **Fixed 6 additional bugs** - Improved stability and reliability
+**Latest Release:** November 14, 2025
 
 ### ✨ New Features
-- **📦 Extended Stack Support** - Now supports 7 stacks (rails, php, node, python, go, rust, generic)
-- **🔍 Verbose Mode** - Use `-v` flag for detailed command execution: `/worktree-start -v rails "feature"`
-- **⚙️ Configurable Paths** - Set custom worktree locations via `.worktree-config.json`
-- **🏷️ Stack Aliases** - Use shortcuts: `js`, `ts`, `py` instead of full names
-- **📝 Local Config** - Per-developer settings with `.worktree-config.local.json`
+- **🤖 Automatic Stack Detection** - No need to specify stack! Just run `/worktree-start "feature description"`
+  - Detects Rails, PHP, Node.js, Python, Go, Rust automatically based on project files
+  - Smart priority system for ambiguous projects
+  - Falls back to generic for unknown projects
+  - Manual override still available when needed
 
-### 🔧 Improvements
-- Comprehensive prerequisite validation (git version, jq availability)
-- Better error messages with installation instructions
-- Enhanced branch name validation
-- Improved REPO_ROOT calculation in merge operations
+### Previous v1.1.0 Highlights
+- **📦 Extended Stack Support** - 7 stacks (rails, php, node, python, go, rust, generic)
+- **🔍 Verbose Mode** - Use `-v` flag for detailed command execution
+- **⚙️ Configurable Paths** - Set custom worktree locations
+- **🏷️ Stack Aliases** - Use shortcuts: `js`, `ts`, `py`
+- **📝 Local Config** - Per-developer settings
+- **🐛 Critical Bug Fixes** - FEATURE.md generation and 6 other fixes
 
 **[View Complete Changelog →](CHANGELOG.md)**
 
@@ -196,11 +194,11 @@ chmod +x install.sh
 ### 5 Minutes to Your First Worktree
 
 ```bash
-# 1. Create worktree (smart mode) - works with any stack!
-/worktree-start rails "Add JWT authentication with refresh tokens"
-# or: /worktree-start node "Add websocket server"
-# or: /worktree-start python "Implement ML model"
-# or: /worktree-start generic "Add new feature"
+# 1. Create worktree with AUTO-DETECTION (NEW!)
+/worktree-start "Add JWT authentication with refresh tokens"
+# 🔍 Detecting project stack...
+# ✅ Detected stack: Ruby on Rails (rails)
+# → Creates: feat/jwt-auth-refresh-tokens + FEATURE.md
 
 # 2. Navigate and work
 cd ../feat/jwt-auth-refresh-tokens
@@ -219,8 +217,14 @@ bin/rails test  # Or your test command
 # Feature complete! 🎉
 ```
 
-### Most Common Command (80% usage)
+### Most Common Commands
 
+**Auto-detection (Recommended):**
+```bash
+/worktree-start "Your feature description"
+```
+
+**Manual stack (when needed):**
 ```bash
 /worktree-start <stack> "Your feature description"
 ```
@@ -252,23 +256,29 @@ See **[STACKS_GUIDE.md](STACKS_GUIDE.md)** for detailed stack configuration.
 
 **Syntax:**
 ```bash
-/worktree-start <stack> "feature description"  # Smart mode (recommended)
+/worktree-start "feature description"          # Auto-detection mode (NEW!)
+/worktree-start <stack> "feature description"  # Smart mode with manual stack
 /worktree-start <stack> branch-name            # Manual mode
-/worktree-start -v <stack> "description"       # Verbose mode (shows all commands)
+/worktree-start -v "description"               # Auto-detection with verbose mode
 ```
 
 **Examples:**
 ```bash
-# Rails smart mode
-/worktree-start rails "Add OAuth2 authentication with Google and GitHub"
+# Auto-detection mode (recommended!)
+/worktree-start "Add OAuth2 authentication with Google and GitHub"
+# 🔍 Detecting project stack...
+# ✅ Detected stack: Ruby on Rails (rails)
 # → Creates: feat/oauth2-auth-google-github + FEATURE.md
 
-# Node.js smart mode with verbose output
-/worktree-start -v node "Implement websocket server with Redis pub/sub"
-# → Creates: feat/websocket-redis-pubsub + FEATURE.md (shows all bash commands)
+# Manual stack (when you need control)
+/worktree-start node "Implement websocket server with Redis pub/sub"
+# → Creates: feat/websocket-redis-pubsub + FEATURE.md
 
-# Python smart mode (using alias)
-/worktree-start py "Add ML model for user recommendations"
+# Auto-detection with verbose mode
+/worktree-start -v "Add ML model for user recommendations"
+# 🔍 Detecting project stack...
+# [DEBUG] Checking stack: python
+# ✅ Detected stack: Python (python)
 # → Creates: feat/ml-user-recommendations + FEATURE.md
 
 # PHP manual mode

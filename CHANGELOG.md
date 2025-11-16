@@ -6,6 +6,72 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## [Unreleased]
 
+---
+
+## [1.2.0] - 2025-11-14
+
+### ✨ Added
+
+#### Feature: Automatic Stack Detection
+- **File:** `lib/detect-stack.sh` (NEW)
+- **Description:** Automatically detects project stack based on files present in repository
+- **Detection Patterns:**
+  - **Rails**: Gemfile + optional config/application.rb or app/models/
+  - **PHP**: composer.json + optional index.php, src/, or public/themes/
+  - **Node.js**: package.json + optional node_modules/ or tsconfig.json
+  - **Python**: One of: requirements.txt, setup.py, pyproject.toml, or Pipfile
+  - **Go**: go.mod + optional go.sum
+  - **Rust**: Cargo.toml + optional Cargo.lock
+  - **Generic**: Fallback when no stack matches
+- **Priority System:** Each stack has configurable priority (0-100) for ambiguous projects
+- **Usage:**
+  ```bash
+  # Auto-detect stack
+  /worktree-start "Add new feature"
+
+  # Manual override still available
+  /worktree-start rails "Add new feature"
+  ```
+- **Impact:** Simpler command syntax, no need to remember/specify stack type
+
+#### Configuration: Detection patterns in config
+- **File:** `.worktree-config.json`
+- **Changes:**
+  - Added `detection_patterns` array to each stack
+  - Added `detection_priority` (0-100, higher = preferred)
+  - Added optional `detection_note` for documentation
+- **Pattern Types:**
+  - `file` - Check for file existence
+  - `directory` - Check for directory existence
+  - Each pattern can be `required: true/false`
+- **Impact:** Customizable detection behavior per stack
+
+#### Integration: Auto-detection in worktree-start
+- **File:** `worktree-start.md:146-283`
+- **Changes:**
+  - Stack parameter is now optional
+  - Detects if first argument is stack name or feature description
+  - Calls `lib/detect-stack.sh` when needed
+  - Shows detection result to user
+  - Graceful fallback to manual mode on detection failure
+- **Compatibility:** All existing commands continue to work
+- **Impact:** Backward compatible enhancement with better UX
+
+### 📚 Improved
+
+#### Documentation: Auto-detection examples
+- **Files:** `README.md`, `worktree-start.md`
+- **Changes:**
+  - Updated "What's New" section with v1.2.0 features
+  - Added auto-detection examples to Quick Start
+  - Updated command syntax documentation
+  - Added visual detection output examples
+- **Impact:** Clear documentation of new feature
+
+---
+
+## [1.1.1] - 2025-01-14
+
 ### 🔧 Changed
 
 #### Stack rename: WordPress → PHP
