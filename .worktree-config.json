@@ -263,7 +263,33 @@
     "max_branch_length": 50,
     "merge_strategy": "no-ff",
     "auto_push": true,
-    "auto_cleanup": true
+    "auto_cleanup": true,
+    "visual_diff_tool": "",
+    "visual_diff_enabled": true
+  },
+  "visual_diff": {
+    "supported_tools": [
+      "opendiff",
+      "vscode",
+      "meld",
+      "kdiff3",
+      "bcomp",
+      "diffuse",
+      "kompare",
+      "vimdiff",
+      "git-difftool"
+    ],
+    "tool_descriptions": {
+      "opendiff": "FileMerge (macOS, comes with Xcode)",
+      "vscode": "Visual Studio Code",
+      "meld": "Meld (cross-platform)",
+      "kdiff3": "KDiff3 (cross-platform)",
+      "bcomp": "Beyond Compare",
+      "diffuse": "Diffuse",
+      "kompare": "Kompare (KDE)",
+      "vimdiff": "Vimdiff (terminal-based)",
+      "git-difftool": "Git's configured difftool"
+    }
   },
   "custom_instructions": {
     "how_to_add_stack": "To add a custom stack, copy one of the existing stack configs and modify it to match your project needs. You can override any setting in your project's .worktree-config.local.json file."

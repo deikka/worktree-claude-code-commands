@@ -50,6 +50,12 @@ Want to see it in action? Check out these example outputs:
 **Latest Release:** November 14, 2025
 
 ### ✨ New Features
+- **🖼️ Visual Diff Integration** - Compare changes with your favorite visual diff tool!
+  - Auto-detects installed tools (VS Code, Meld, KDiff3, FileMerge, Beyond Compare, etc.)
+  - Interactive file selection for focused review
+  - One command to launch visual comparisons
+  - Saves your tool preference for future use
+  - Usage: `/worktree-compare -v main` (all files) or `-i main` (select files)
 - **🎯 Interactive Mode** - Perfect for beginners! Run `/worktree-start -i "feature"`
   - Guided experience with visual prompts
   - Choose change type (feature/bugfix/hotfix/refactor)
@@ -324,16 +330,27 @@ See **[STACKS_GUIDE.md](STACKS_GUIDE.md)** for detailed stack configuration.
 
 **Syntax:**
 ```bash
-/worktree-compare [target-branch]  # Default: main/master auto-detect
+/worktree-compare [options] [target-branch]  # Default: main/master auto-detect
 ```
+
+**Options:**
+- `-v` or `--visual`: Launch visual diff tool automatically (NEW!)
+- `-i` or `--interactive`: Interactive file selection for visual diff (NEW!)
 
 **Examples:**
 ```bash
-# Compare with main
-/worktree-compare
+# Standard comparison (terminal)
+/worktree-compare main
 
-# Compare with develop
-/worktree-compare develop
+# Visual comparison (all files - NEW!)
+/worktree-compare -v main
+# Auto-detects and launches: VS Code, Meld, KDiff3, FileMerge, etc.
+
+# Interactive visual comparison (select specific files - NEW!)
+/worktree-compare -i main
+# ☑️ app/models/user.rb
+# ☐ app/controllers/users_controller.rb
+# ☑️ config/routes.rb
 ```
 
 **What it shows:**
@@ -341,6 +358,16 @@ See **[STACKS_GUIDE.md](STACKS_GUIDE.md)** for detailed stack configuration.
 - 📝 Commit list
 - ⚠️ Detection of potential conflicts
 - 📋 Full diff for review
+- 🖼️ (NEW!) Visual diff with your preferred tool
+
+**Supported Visual Diff Tools:**
+- VS Code (`code --diff`)
+- Meld
+- KDiff3
+- FileMerge / opendiff (macOS)
+- Beyond Compare
+- Diffuse, Kompare, Vimdiff
+- Git's configured difftool
 
 **[Complete documentation →](./worktree-compare.md)**
 

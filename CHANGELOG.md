@@ -12,6 +12,42 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ### ✨ Added
 
+#### Feature: Visual Diff Tool Integration
+- **File:** `lib/visual-diff.sh` (NEW)
+- **Description:** Integration with popular visual diff tools for better code review
+- **Supported Tools:**
+  - VS Code (`code --diff`)
+  - Meld (cross-platform)
+  - KDiff3 (cross-platform)
+  - FileMerge / opendiff (macOS with Xcode)
+  - Beyond Compare
+  - Diffuse, Kompare (Linux)
+  - Vimdiff (terminal-based fallback)
+  - Git's configured difftool
+- **Features:**
+  - Auto-detection of available tools on system
+  - Interactive tool selection with descriptions
+  - Preference saving to `.worktree-config.local.json`
+  - File-by-file comparison mode
+  - Interactive multi-select for specific files
+  - Integration with `worktree-compare` command
+- **Usage:**
+  ```bash
+  # Visual comparison (all files)
+  /worktree-compare -v main
+
+  # Interactive file selection
+  /worktree-compare -i main
+
+  # Standalone tool selection
+  bash lib/visual-diff.sh select
+  ```
+- **Configuration:**
+  - Added `visual_diff_tool` and `visual_diff_enabled` to `.worktree-config.json`
+  - Tool preference saved to local config
+  - Supports custom difftool configuration
+- **Impact:** Better code review experience with familiar visual tools
+
 #### Feature: Interactive Mode
 - **File:** `lib/interactive-prompt.sh` (NEW)
 - **Description:** Guided interactive mode for worktree creation with visual prompts
@@ -68,6 +104,27 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
   - Each pattern can be `required: true/false`
 - **Impact:** Customizable detection behavior per stack
 
+#### Integration: Visual diff in worktree-compare
+- **File:** `worktree-compare.md`
+- **Changes:**
+  - Added `-v` / `--visual` flag for automatic visual diff
+  - Added `-i` / `--interactive` flag for file selection
+  - Integration with `lib/visual-diff.sh` for tool management
+  - Multi-select interface for choosing specific files to compare
+  - Fallback to git difftool for directory-level comparison
+  - Temporary file creation for version comparison
+  - Automatic cleanup of temp files
+  - Tool preference loading and saving
+- **Visual Diff Flow:**
+  1. Parse visual diff flags
+  2. Load visual-diff.sh helper
+  3. Get list of changed files
+  4. Interactive mode: Show multi-select menu
+  5. For each selected file: Create temp files from both branches
+  6. Launch configured visual diff tool
+  7. Clean up temp files
+- **Impact:** Dramatically improved code review experience with side-by-side comparison
+
 #### Integration: Interactive and Auto-detection in worktree-start
 - **File:** `worktree-start.md`
 - **Changes:**
@@ -89,20 +146,25 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ### 📚 Improved
 
-#### Documentation: Interactive mode and auto-detection examples
-- **Files:** `README.md`, `worktree-start.md`
+#### Documentation: Visual diff, interactive mode, and auto-detection
+- **Files:** `README.md`, `worktree-start.md`, `worktree-compare.md`
 - **Changes:**
-  - Updated "What's New" section with v1.2.0 features
+  - Updated "What's New" section with all v1.2.0 features
+  - Added visual diff integration documentation
+  - Listed supported diff tools with examples
   - Added interactive mode examples with full workflow
   - Added auto-detection examples to Quick Start
-  - Updated command syntax documentation
+  - Updated command syntax documentation for all commands
   - Added visual detection and interactive output examples
   - Created comprehensive "Example Workflows" section showing:
-    - Interactive mode (best for beginners)
+    - Visual diff mode (interactive file selection)
+    - Interactive worktree mode (best for beginners)
     - Auto-detection mode (best for speed)
     - Smart mode (manual stack control)
     - Manual mode (direct branch naming)
-- **Impact:** Clear documentation of new features with visual examples
+  - Updated worktree-compare documentation with visual diff flags
+  - Added tool detection and preference saving examples
+- **Impact:** Clear documentation of all new features with visual examples and workflows
 
 ---
 
