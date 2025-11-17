@@ -121,28 +121,35 @@ FAILED=0
 for cmd in "${COMMANDS[@]}"; do
     SRC_FILE="$SCRIPT_DIR/$cmd"
     DST_FILE="$COMMANDS_DIR/$cmd"
-    
+
     if [ -f "$SRC_FILE" ]; then
         # Check if file already exists
         if [ -f "$DST_FILE" ]; then
             print_warning "$cmd already exists"
             if [ "$YES_MODE" = true ]; then
-                REPLY="y"
                 echo "  Auto-approving overwrite (--yes mode)"
+                # Copy the file
+                cp "$SRC_FILE" "$DST_FILE"
+                print_success "Installed $cmd"
+                ((INSTALLED++))
             else
                 read -p "  Overwrite? (y/n) " -n 1 -r
                 echo
+                if [[ $REPLY =~ ^[Yy]$ ]]; then
+                    # Copy the file
+                    cp "$SRC_FILE" "$DST_FILE"
+                    print_success "Installed $cmd"
+                    ((INSTALLED++))
+                else
+                    print_info "  Skipped $cmd"
+                fi
             fi
-            if [[ ! $REPLY =~ ^[Yy]$ ]]; then
-                print_info "  Skipped $cmd"
-                continue
-            fi
+        else
+            # Copy the file (new installation)
+            cp "$SRC_FILE" "$DST_FILE"
+            print_success "Installed $cmd"
+            ((INSTALLED++))
         fi
-        
-        # Copy the file
-        cp "$SRC_FILE" "$DST_FILE"
-        print_success "Installed $cmd"
-        ((INSTALLED++))
     else
         print_error "Source file not found: $SRC_FILE"
         ((FAILED++))
@@ -215,3 +222,10 @@ echo "  /worktree-start rails \"Add user authentication\""
 echo ""
 print_success "Happy parallel development!"
 echo ""
+
+# Exit with appropriate code
+if [ $FAILED -gt 0 ]; then
+    exit 1
+else
+    exit 0
+fi
