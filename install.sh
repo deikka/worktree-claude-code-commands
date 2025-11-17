@@ -131,7 +131,7 @@ for cmd in "${COMMANDS[@]}"; do
                 # Copy the file
                 cp "$SRC_FILE" "$DST_FILE"
                 print_success "Installed $cmd"
-                ((INSTALLED++))
+                INSTALLED=$((INSTALLED + 1))
             else
                 read -p "  Overwrite? (y/n) " -n 1 -r
                 echo
@@ -139,7 +139,7 @@ for cmd in "${COMMANDS[@]}"; do
                     # Copy the file
                     cp "$SRC_FILE" "$DST_FILE"
                     print_success "Installed $cmd"
-                    ((INSTALLED++))
+                    INSTALLED=$((INSTALLED + 1))
                 else
                     print_info "  Skipped $cmd"
                 fi
@@ -148,11 +148,11 @@ for cmd in "${COMMANDS[@]}"; do
             # Copy the file (new installation)
             cp "$SRC_FILE" "$DST_FILE"
             print_success "Installed $cmd"
-            ((INSTALLED++))
+            INSTALLED=$((INSTALLED + 1))
         fi
     else
         print_error "Source file not found: $SRC_FILE"
-        ((FAILED++))
+        FAILED=$((FAILED + 1))
     fi
 done
 
